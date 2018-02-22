@@ -1,0 +1,19 @@
+<div class="tutorial" >
+    <tut-sidebar></tut-sidebar>
+    <div class="application">
+        <tut-header collection="location" ></tut-header>
+        <div class="applicationSpace" >
+            <tut-notification></tut-notification>
+            <span ng-class="{'hidden': ready}" class="loading">Loading applications...</span>
+            <div ng-class="{'hidden': location !== '/car-builder' || !ready}"  class="holder small" >
+                <iframe id="carBuilder" ng-src="/car-builder"></iframe>
+            </div>
+            <div ng-class="{'hidden': location !== '/manufacturer-dashboard'}" class="holder" >
+                <iframe id="manufacturer" ng-src="/manufacturer-dashboard"></iframe>
+            </div>
+            <div ng-class="{'hidden': location !== '/regulator-dashboard'}" class="holder" >
+                <iframe ng-src="/regulator-dashboard"></iframe>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div id="tut-sidebar" ng-class="{'expanded': expanded}">
+        <div id="expandContract" ng-click="expanded = !expanded" >
+        </div>
+        <div id="app-links" >
+            <div class="app-tab" ng-class="{'selected': location === '/car-builder', 'selectable': mode === 'normal'}" ng-click="mode === 'normal' && changePage('/car-builder', 0)" >
+                <div class="app-icon" >
+                    <svg aria-hidden="true" >
+                        <use xlink:href="/assets/images/buyer.svg#buyer"></use>
+                    </svg>
+                </div>
+                <div class="app-name" >Builder</div>
+            </div>
+            <div class="app-tab" ng-class="{'selected': location === '/manufacturer-dashboard', 'selectable': mode === 'normal'}" ng-click="mode === 'normal' && changePage('/manufacturer-dashboard', 0)" >
+                <div class="app-icon" >
+                    <svg aria-hidden="true" >
+                        <use xlink:href="/assets/images/manufacturer.svg#manufacturer"></use>
+                    </svg>
+                </div>
+                <div class="app-name" >Manufacturer</div>
+            </div>
+            <div class="app-tab" ng-class="{'selected': location === '/regulator-dashboard', 'selectable': mode === 'normal'}" ng-click="mode === 'normal' && changePage('/regulator-dashboard', 0)" >
+                <div class="app-icon" >
+                    <svg aria-hidden="true" >
+                        <use xlink:href="/assets/images/regulator.svg#regulator"></use>
+                    </svg>
+                </div>
+                <div class="app-name" >Regulator</div>
+            </div>
+        </div>
+        <div id="tutorial-text" >
+            <div class="holder" ng-class="{'complete': item.complete}" ng-repeat="item in tutorial[tutorialPage].steps">
+                <div class="title" ng-bind-html="item.title"></div>
+                <div ng-bind-html="item.text"></div>
+            </div>
+        </div>
+        <div id="actions">
+            <button class="tutorial-button" ng-if="tutorial[tutorialPage].button" ng-disabled="tutorial[tutorialPage].button.disabled" ng-click="changePage(tutorial[tutorialPage].button.navigateTo, 1)" >
+                {{ tutorial[tutorialPage].button.text }}
+            </button>
+        </div>
+    </div>

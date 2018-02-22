@@ -1,0 +1,87 @@
+@import "../../../assets/stylesheets/colours.less";
+@import "../../../assets/stylesheets/font.less";
+
+@notification-width: 300px;
+
+.notification {
+    padding: 23px;
+    border: 2px solid @white;
+    background-color: @white;
+    width: @notification-width;
+    position: absolute;
+    box-sizing: border-box;
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+
+    &.top {
+        top: calc(70px + 1em);
+    }
+
+    &.bottom {
+        bottom: 50px;
+    }
+
+    &.left {
+        left: 50px;
+    }
+
+    &.right {
+        left: calc(100% - @notification-width - 50px);
+    }
+
+    &.fade {
+        animation-name: fadeIn;
+        animation-duration: 1s;
+    }
+
+    &.border {
+        animation-name: fadeBorder;
+        animation-duration: 1s;
+    }
+
+    .title {
+        font-weight: @bold;
+        margin-bottom: 10px;
+    }
+
+    .close {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+        height: 12px;
+        width: 12px;
+        opacity: 0.5;
+
+        &:before, &:after {
+            position: absolute;
+            left: 6px;
+            content: ' ';
+            height: 12px;
+            width: 2px;
+            background-color: @black;
+        }
+
+        &:before {
+            transform: rotate(45deg);
+        }
+        &:after {
+            transform: rotate(-45deg);
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+
+@keyframes fadeBorder {
+    0% {border: 2px solid @white;}
+    50% {border: 2px solid @grey;}
+    0% {border: 2px solid @white;}
+}

@@ -1,0 +1,7 @@
+{
+  "restServer": {
+      "webSocketURL": "ws://localhost:3000",
+      "httpURL": "http://localhost:3000/api",
+      "accessToken": "DLHyHuJAbrzUwAAZ73Mh4B5D9zMxEVVpl0jOCEg8KHDddxkXHRMqTqg48bpjQHiT"
+  }
+}

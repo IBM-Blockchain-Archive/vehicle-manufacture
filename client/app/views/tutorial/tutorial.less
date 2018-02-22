@@ -1,0 +1,94 @@
+@import "../../../assets/stylesheets/colours.less";
+
+.tutorial {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100%;
+    width: 100%;
+
+    .application {
+        flex-grow: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+
+        .applicationSpace {
+            width: 100%;
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+
+            .loading {
+                &.hidden {
+                    display: none;
+                }
+            }
+
+            .holder {
+                height: 100%;
+                width: 100%;
+
+                &.hidden {
+                    height: 0!important;
+                    width: 0!important;
+                    padding: 0!important;
+                }
+
+                &.small {
+                    height: 800px;
+                    width: 450px;
+                    
+                    &:not(.hidden) {
+                        border: 3px solid @black;
+                    }
+
+                }
+
+                @media only screen and (min-height : 750px) and (max-height : 1000px) {
+                    &.small {
+                        height: 667px;
+                        width: 375px;
+                    }
+                }
+
+                @media only screen and (min-height : 650px) and (max-height : 750px) {
+                    &.small {
+                        height: 600px;
+                        width: 338px;
+                    }
+                }
+
+                @media only screen and (min-height : 550px) and (max-height : 650px) {
+                    &.small {
+                        padding: 0;
+                        height: 500px;
+                        width: 281px;
+                    }
+                }
+
+                @media only screen and (min-height : 0px) and (max-height : 550px) {
+                    &.small {
+                        padding: 0;
+                        height: 390px;
+                        width: 220px;
+                    }
+                }
+
+                iframe {
+                    border: #000;
+                    height: 100%;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

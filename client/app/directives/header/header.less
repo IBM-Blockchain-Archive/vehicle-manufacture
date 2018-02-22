@@ -1,0 +1,49 @@
+@import "../../../assets/stylesheets/colours.less";
+@import "../../../assets/stylesheets/font.less";
+
+tut-header {
+    box-sizing: border-box;
+    background-color: @white;
+    color: @grey;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    font-size: 0.9em;
+
+    div {
+
+        display: flex;
+        align-items: flex-start;
+
+        b {
+            font-weight: @bold;
+            
+            &.addSpace {
+                &::after {
+                    content: ' ';
+                    white-space: pre;
+                }
+            }
+        }
+
+        &:first-child {
+            flex: 1;
+        }
+
+        &:last-child {
+            svg {
+                height: 1.1em;
+                width: 1.1em;
+                fill: @grey;
+            }
+        }
+
+        .pipe {
+            height: 0.9em;
+            width: 1px;
+            background-color: @grey;
+            margin: 0 1em;
+        }
+    }
+}

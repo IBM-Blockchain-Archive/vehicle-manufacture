@@ -1,0 +1,227 @@
+@import "../../../assets/stylesheets/colours.less";
+@import "../../../assets/stylesheets/common.less";
+@import "../../../assets/stylesheets/font.less";
+
+#tut-sidebar {
+    width: @sidebar-expanded;
+	height: 100%;
+    min-height: 100%;
+	display: flex;
+    flex-direction: column;
+    background-color: @dark-grey-blue;
+
+    #expandContract {
+        border-right: 1px solid @white;
+        border-bottom: 1px solid @white;
+        width: @sidebar-contracted;
+        height: @sidebar-contracted;
+        position: relative;
+        cursor: pointer;
+
+        &:before, &:after {
+            position: absolute;
+            left: 50%;
+            top: calc(50% - 10px);
+            content: ' ';
+            height: 20px;
+            width: 1px;
+            background-color: @white;
+        }
+
+        &:before {
+            transform: rotate(45deg);
+        }
+        &:after {
+            transform: rotate(-45deg);
+        }
+    }
+		
+	#app-links {        
+        .app-tab {
+            cursor: pointer;
+            color: @bright-blue;
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 1px;
+
+            &.selectable:hover {
+                background-color: @bright-blue;
+                color: @dark-grey-blue;
+                .app-icon {
+                    svg {
+                        fill: @dark-grey-blue;
+                        stroke: @dark-grey-blue;
+                        stroke-width: 1px;
+                    }
+                }
+            }
+
+            &.selected {
+                background-color: @bright-blue;
+                color: @dark-grey-blue;
+                opacity: 1!important;
+                .app-icon {
+                    svg {
+                        fill: @dark-grey-blue;
+                        stroke: @dark-grey-blue;
+                        stroke-width: 1px;
+                    }
+                }
+            }
+
+            &:not(.selectable) {
+                opacity: 0.5;
+                cursor: default;
+            }
+
+            .app-icon {
+                width: @sidebar-contracted;
+                height: 20px;
+                padding: calc((@sidebar-contracted - 20px)/2) 0;
+                text-align: center;
+
+                svg {
+                    height: 20px;
+                    width: 20px;
+                    fill: @bright-blue;
+                    stroke: @bright-blue;
+                    stroke-width: 1px;
+                }
+            }
+
+            .app-name {
+                display: flex;
+                flex: 1;
+                align-items: center;
+                justify-content: left;
+            }
+        }
+	}
+	
+	#tutorial-text {
+        padding: 25px 25px 10px 25px;
+        flex: 1;
+        color: @white;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        overflow: auto;
+        line-height: 1.5em;
+
+        &::-webkit-scrollbar {
+            width: 20px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            box-shadow: inset 0 0 10px 10px transparent;
+            border: solid 5px transparent;
+        }
+
+        &:hover {
+            &::-webkit-scrollbar {
+                width: 20px;
+            }
+            
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            
+            &::-webkit-scrollbar-thumb {
+                border-radius: 5px;
+                box-shadow: inset 0 0 10px 10px @pale-grey;
+                border: solid 5px transparent;
+            }
+        }
+
+        .holder {
+            display: table; // FF FIX FOR IT NOT SCROLLING
+
+            &:not(:first-child) {
+                margin-top: 25px;
+            }
+
+            &:last-child {
+                min-height: 0; // FF FIX FOR IT NOT SCROLLING
+                display: flex; // FF FIX FOR IT NOT SCROLLING
+                flex-direction: column; // FF FIX FOR IT NOT SCROLLING
+            }
+
+            &.complete {
+                td {
+                    background-color: limegreen;
+                }
+            }
+
+            .title {
+                margin-bottom: 25px;
+                font-weight: @bold;
+            }
+        }
+	}
+	
+	#actions {
+        padding: 50px 25px;  
+        button {
+            display: inline-block;
+            padding: 15px;
+            background-color: transparent;
+            border: 1px solid @bright-blue;
+            cursor: pointer;
+            color: @bright-blue;
+            font-size: 1em;
+            font-family: @plainFont;
+            font-weight: @light;
+
+            &:disabled, &[disabled] {
+                opacity: 0.5;
+                background-color: transparent!important;
+                color: @white!important;
+            }
+
+            &:hover {
+                background-color: @bright-blue;
+                color: @dark-grey-blue;
+            }
+        }
+    }
+    
+    &:not(.expanded) {
+        width: @sidebar-contracted;
+        #expandContract {
+            border-right: none;
+
+            &:before, &:after {
+                height: 20px;
+            }
+
+            &:before {
+                transform: rotate(0deg);
+            }
+
+            &:after {
+                transform: rotate(-90deg);
+            }
+        }
+
+        #app-links {        
+            .app-tab {
+                .app-name {
+                    display: none;
+                }
+            }
+        }
+
+        #tutorial-text {
+            display: none;
+        }
+
+        #actions {
+            display: none;
+        }
+    }
+}
