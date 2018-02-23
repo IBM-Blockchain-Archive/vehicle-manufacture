@@ -8,6 +8,7 @@ var WebSocket = require('ws');
 var http = require('http');
 var url = require('url');
 var config = require('config');
+var fs = require('fs');
 
 var TutorialParser = require(__dirname+'/utils/tutorialParser');
 
@@ -17,13 +18,12 @@ var server = http.createServer(app);
 
 app.use(bodyParser.json());
 
-
-
 // static - all our js, css, images, etc go into the assets path
 app.use('/app', express.static(path.join(__dirname, '../client', 'app')));
 app.use('/bower_components', express.static(path.join(__dirname, '../client', 'bower_components')));
 app.use('/assets', express.static(path.join(__dirname, '../client', 'assets')));
 app.use('/data', express.static(path.join(__dirname, '../client', 'data')));
+app.use('/custom-application-styles', express.static(path.join(__dirname, '/demo-applications', 'style')));
 
 app.use('/less/stylesheets/*', function (req, res, next) {
   var url = req.originalUrl;
@@ -66,6 +66,46 @@ app.get('/assets/config.json', (req, res) => {
   })
 })
 
+var linkRegEx = new RegExp('\s*<link');
+
+var manufactureIndexHTML = fs.readFileSync(path.join(__dirname, '../node_modules/vehicle-manufacture-manufacturing/client/index.html')).toString().split('/n');
+manufactureIndexHTML.some((line, index) => {
+  if(linkRegEx.test(line)) {
+    manufactureIndexHTML.splice(index, 0, '<link rel="stylesheet" href="/custom-application-styles/manufacturer.css">');
+    return;
+  }
+})
+manufactureIndexHTML = manufactureIndexHTML.join('\n');
+
+var regulatorIndexHTML = fs.readFileSync(path.join(__dirname, '../node_modules/vehicle-manufacture-vda/client/index.html')).toString().split('/n');
+regulatorIndexHTML.some((line, index) => {
+  if(linkRegEx.test(line)) {
+    regulatorIndexHTML.splice(index, 0, '<link rel="stylesheet" href="/custom-application-styles/regulator.css">');
+    return;
+  }
+})
+regulatorIndexHTML = regulatorIndexHTML.join('\n');
+
+app.use('/tutorial', function (req, res) {
+  res.sendFile(path.join(__dirname, '../client', 'index.html'));
+});
+
+app.use('/car-builder', function (req, res) {
+  res.sendFile(path.join(__dirname, '../node_modules/vehicle-manufacture-car-builder/www', 'index.html'));
+});
+
+app.use('/manufacturer-dashboard', function (req, res) {
+  res.send(manufactureIndexHTML);
+});
+
+app.use('/regulator-dashboard', function (req, res) {
+  res.send(regulatorIndexHTML);
+});
+
+app.use('/*', function (req, res) {
+  res.redirect('/tutorial');
+})
+
 var wss = new WebSocket.Server({ server: server });
 wss.on('connection', function (ws) {
   var location = url.parse(ws.upgradeReq.url, true);
@@ -98,27 +138,6 @@ wss.on('connection', function (ws) {
     ws.close();
   });
 });
-
-// This route deals enables HTML5Mode by forwarding missing files to the index.html
-app.use('/tutorial', function (req, res) {
-  res.sendFile(path.join(__dirname, '../client', 'index.html'));
-});
-
-app.use('/car-builder', function (req, res) {
-  res.sendFile(path.join(__dirname, '../node_modules/vehicle-manufacture-car-builder/www', 'index.html'));
-});
-
-app.use('/manufacturer-dashboard', function (req, res) {
-  res.sendFile(path.join(__dirname, '../node_modules/vehicle-manufacture-manufacturing/client', 'index.html'));
-});
-
-app.use('/regulator-dashboard', function (req, res) {
-  res.sendFile(path.join(__dirname, '../node_modules/vehicle-manufacture-vda/client', 'index.html'));
-});
-
-app.use('/*', function (req, res) {
-  res.redirect('/tutorial');
-})
 
 // get the app environment from Cloud Foundry
 var appEnv = cfenv.getAppEnv();

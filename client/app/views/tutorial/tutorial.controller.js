@@ -79,7 +79,7 @@ angular.module('tutorial')
             let notifications = $scope.tutorial[$scope.tutorialPage].notifications;
             notifications.forEach((notification, index) => {
                 if(notification.createWhen && notification.createWhen.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(notification.createWhen, message)) {
-                    $rootScope.$broadcast('addNotification', [notification.title, notification.text, notification.vertical, notification.horizontal]);
+                    $rootScope.$broadcast('addNotification', [notification]);
                 } else if(notification.destroyWhen && notification.destroyWhen.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(notification.createWhen, message)) {
                     $rootScope.$broadcast('removeNotification', [notification.title, notification.text, notification.vertical, notification.horizontal]);
                 }
@@ -108,6 +108,18 @@ angular.module('tutorial')
             $scope.$apply(); 
         }
     }
+
+    $scope.reset = () => {
+        $scope.mode = 'normal';
+        $scope.tutorialPage = 0;
+        $scope.tutorial.forEach((page) => {
+            page.notifications.forEach((notification) => {
+                notification.closed = false;
+                notification.alreadyShown = false;
+            })
+        });
+        $scope.changePage('/car-builder', 0);
+    };
     
 
     $scope.$on('$destroy', function () {
@@ -122,10 +134,10 @@ function setupNotifications($scope, $rootScope, pageNumber) {
     $scope.tutorial[pageNumber].notifications.forEach((notification, index) => {
 
         if(!notification.createWhen) {
-            $rootScope.$broadcast('addNotification', [notification.title, notification.text, notification.vertical, notification.horizontal]);
+            $rootScope.$broadcast('addNotification', [notification]);
         } else if(notification.createWhen.rule_type === 'LISTENER') {
             setupObjectListeners($scope, notification.createWhen, () => {
-                $rootScope.$broadcast('addNotification', [notification.title, notification.text, notification.vertical, notification.horizontal]);
+                $rootScope.$broadcast('addNotification', [notification]);
             });
         }
 
