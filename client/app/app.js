@@ -1,8 +1,9 @@
 angular.module('tutorial', [
-  'ui.router'
+  'ui.router',
+  'ngCookies'
 ])
 
-.config(function ($urlRouterProvider, $stateProvider, $locationProvider) {
+.config(function ($urlRouterProvider, $stateProvider, $locationProvider, $cookiesProvider) {
   'use strict';
 
   $locationProvider.html5Mode({

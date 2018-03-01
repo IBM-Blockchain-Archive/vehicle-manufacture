@@ -27,14 +27,14 @@
                 <div class="app-name" >Regulator</div>
             </div>
         </div>
-        <div id="tutorial-text" >
+        <div ng-if="mode === 'tutorial'" id="tutorial-text" >
             <div class="holder" ng-class="{'complete': item.complete}" ng-repeat="item in tutorial[tutorialPage].steps">
                 <div class="title" ng-bind-html="item.title"></div>
                 <div ng-bind-html="item.text"></div>
             </div>
         </div>
-        <div id="actions">
-            <button class="tutorial-button" ng-if="tutorial[tutorialPage].button" ng-disabled="tutorial[tutorialPage].button.disabled" ng-click="changePage(tutorial[tutorialPage].button.navigateTo, 1)" >
+        <div ng-if="mode === 'tutorial'" id="actions">
+            <button class="tutorial-button" id="tutorial{{tutorialPage}}Button" ng-if="tutorial[tutorialPage].button" ng-disabled="tutorial[tutorialPage].button.disabled" ng-click="changePage(tutorial[tutorialPage].button.navigateTo, 1)" >
                 {{ tutorial[tutorialPage].button.text }}
             </button>
         </div>

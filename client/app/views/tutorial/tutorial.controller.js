@@ -1,12 +1,18 @@
+var destroyed = false;
+
 angular.module('tutorial')
 
-.controller('TutorialCtrl', ['$scope', '$rootScope', '$sce', '$http', function ($scope, $rootScope, $sce, $http) {
-    var destroyed = false;
+.constant('_', window._)
+
+.controller('TutorialCtrl', ['$scope', '$rootScope', '$timeout', '$sce', '$http', '$cookies', function ($scope, $rootScope, $timeout, $sce, $http, $cookies) {
+
+    destroyed = false;
     $scope.location = '/car-builder';    
     $scope.ready = false;
-    $scope.mode = 'normal';
+    $scope.mode = typeof $cookies.get('mode') === 'undefined' ? $scope.mode = 'start' : $cookies.get('mode');
     $scope.tutorialPage = 0;
     $scope.notifications = [];
+    localStorage.setItem("ignoreTxnsBefore", new Date());
     
     $http({method: 'GET', url: '/assets/config.json'}).then((config) => {
         $scope.tutorial = config.data.tutorial
@@ -19,74 +25,12 @@ angular.module('tutorial')
             })
         });
 
-        document.getElementById('carBuilder').addEventListener('load', function (){
-            document.getElementById('carBuilder').removeEventListener('load', arguments.callee);
-            $scope.ready = true;
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
+        $scope.unUpdatedTutorial = _.cloneDeep($scope.tutorial); // CLONE SO IT DOESN'T GET UPDATED
 
-            setupNotifications($scope, $rootScope, 0);
-
-            let setMode = () => {
-                $scope.mode = 'tutorial';
-                if(!$scope.$$phase) {
-                    $scope.$apply();
-                }
-                document.getElementsByClassName('tutorial-button')[0].removeEventListener('click', this);
-            }
-
-            document.getElementsByClassName('tutorial-button')[0].addEventListener('click', setMode);
-
-            if($scope, $scope.tutorial[0].button.enablementRule) {
-                setupObjectListeners($scope, $scope.tutorial[0].button.enablementRule, () => {
-                    $scope.tutorial[0].button.disabled = false;
-                    if(!$scope.$$phase) {
-                        $scope.$apply();
-                    }
-                });
-            }
-
-            setupStageListeners($scope, $scope.tutorial[0].steps[0].listeners, 0, 0);
-        });  
+        awaitIFrameLoad($scope, $rootScope);
     })
 
-    function openWebSocket() {
-        var webSocketURL = 'ws://' + location.host;
-        let websocket = new WebSocket(webSocketURL);
-        websocket.onopen = function () {
-            console.log('Tutorial websocket is open');
-        }
-    
-        websocket.onclose = function () {
-            console.log('Tutorial websocket closed');
-            if (!destroyed) {
-                openWebSocket();
-            }
-        }
-    
-        websocket.onmessage = function (event) {
-            let message = JSON.parse(event.data);
-
-            let button = $scope.tutorial[$scope.tutorialPage].button;
-            if (button.enablementRule && button.enablementRule.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(button.enablementRule, message)) {
-                button.disabled = false;
-                if (!$scope.$$phase) {
-                    $scope.$apply();
-                }
-            }
-
-            let notifications = $scope.tutorial[$scope.tutorialPage].notifications;
-            notifications.forEach((notification, index) => {
-                if(notification.createWhen && notification.createWhen.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(notification.createWhen, message)) {
-                    $rootScope.$broadcast('addNotification', [notification]);
-                } else if(notification.destroyWhen && notification.destroyWhen.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(notification.createWhen, message)) {
-                    $rootScope.$broadcast('removeNotification', [notification.title, notification.text, notification.vertical, notification.horizontal]);
-                }
-            })
-        }
-    }
-    openWebSocket();
+    openWebSocket($scope, $rootScope);
 
     $scope.changePage = (newLocation, forward) => {
         if (newLocation) {
@@ -99,26 +43,36 @@ angular.module('tutorial')
             $scope.tutorialPage += forward;
         }
 
-        if ($scope.tutorial[$scope.tutorialPage]) {
-            setupStageListeners($scope, $scope.tutorial[$scope.tutorialPage].steps[0].listeners, $scope.tutorialPage, 0);
-            setupNotifications($scope, $rootScope, $scope.tutorialPage);
-        }
-
         if (!$scope.$$phase) {
             $scope.$apply(); 
         }
+
+        $timeout(function(){
+            if ($scope.tutorial[$scope.tutorialPage]) {
+                setupStageListeners($scope, $scope.tutorial[$scope.tutorialPage].steps[0].listeners, $scope.tutorialPage, 0);
+                setupNotifications($scope, $rootScope, $scope.tutorialPage);
+            }
+        }, 0, false);
     }
 
     $scope.reset = () => {
-        $scope.mode = 'normal';
+        $scope.mode = 'start';
+        $scope.expanded = false;
         $scope.tutorialPage = 0;
-        $scope.tutorial.forEach((page) => {
-            page.notifications.forEach((notification) => {
-                notification.closed = false;
-                notification.alreadyShown = false;
-            })
-        });
+
+        removeAllListeners();
+
+        $scope.tutorial = _.cloneDeep($scope.unUpdatedTutorial);
+
+        $scope.ready = false;
+
+        localStorage.setItem("ignoreTxnsBefore", new Date());
+
+        document.getElementById('carBuilder').contentWindow.location.reload();
+
         $scope.changePage('/car-builder', 0);
+
+        awaitIFrameLoad($scope, $rootScope);
     };
     
 
@@ -126,9 +80,74 @@ angular.module('tutorial')
         destroyed = true;
     });
 
+    $scope.$watch('mode', () => {
+        $cookies.put('mode', $scope.mode);
+    });
 }]);
 
 var openListeners = [];
+
+function awaitIFrameLoad($scope, $rootScope) {
+    document.getElementById('carBuilder').addEventListener('load', function (){
+        document.getElementById('carBuilder').removeEventListener('load', arguments.callee);
+
+        setupNotifications($scope, $rootScope, 0);
+
+        if($scope, $scope.tutorial[0].button.enablementRule) {
+            setupObjectListeners($scope, $scope.tutorial[0].button.enablementRule, () => {
+                $scope.tutorial[0].button.disabled = false;
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+        }
+
+        setupStageListeners($scope, $scope.tutorial[0].steps[0].listeners, 0, 0);
+
+        $scope.mode = $scope.mode;
+        $scope.ready = true;
+        if(!$scope.$$phase) {
+            $scope.$apply();
+        }
+    });
+}
+
+function openWebSocket($scope, $rootScope) {
+    var webSocketURL = 'ws://' + location.host;
+    let websocket = new WebSocket(webSocketURL);
+    websocket.onopen = function () {
+        console.log('Tutorial websocket is open');
+    }
+
+    websocket.onclose = function () {
+        console.log('Tutorial websocket closed');
+        if (!destroyed) {
+            openWebSocket($scope, $rootScope);
+        }
+    }
+
+    websocket.onmessage = function (event) {
+        let message = JSON.parse(event.data);
+        let button = $scope.tutorial[$scope.tutorialPage].button;
+        if (button.enablementRule && button.enablementRule.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(button.enablementRule, message)) {
+            button.disabled = false;
+            if (!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }
+
+        let notifications = $scope.tutorial[$scope.tutorialPage].notifications;
+        let notificationsToAdd = [];
+        notifications.forEach((notification, index) => {
+            if(notification.createWhen && notification.createWhen.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(notification.createWhen, message)) {
+                notificationsToAdd.push(notification);
+            } else if(notification.destroyWhen && notification.destroyWhen.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(notification.createWhen, message)) {
+                $rootScope.$broadcast('removeNotification', [notification.title, notification.text, notification.vertical, notification.horizontal]);
+            }
+        })
+        $rootScope.$broadcast('addNotifications', [notificationsToAdd]);
+    }
+}
 
 function setupNotifications($scope, $rootScope, pageNumber) {
     $scope.tutorial[pageNumber].notifications.forEach((notification, index) => {
@@ -156,17 +175,7 @@ function getiFrame(frameId) {
 
 function evaluateRuleSetAgainstEvent(rule, object) {
     
-    var leftHand;
-
-    switch(rule.comparison) {
-        case 'EQUAL': leftHand = (object[rule.key] === rule.value); break;
-        case 'NOT EQUAL': leftHand = (object[rule.key] !== rule.value); break;
-        case 'GREATER THAN': leftHand = (object[rule.key] > rule.value); break;
-        case 'GREATER THAN OR EQUAL': leftHand = (object[rule.key] >= rule.value); break;
-        case 'LESS THAN': leftHand = (object[rule.key] > rule.value); break;
-        case 'LESS THAN OR EQUAL': leftHand = (object[rule.key] >= rule.value); break;
-        default: throw new Error('Comparison value invalid', rule.comparison);
-    }
+    var leftHand = calculateBoolean(object[rule.key], rule.comparison, rule.value);
 
     if (rule.combineWith) {
         switch(rule.combineWith.connection) {
@@ -177,6 +186,18 @@ function evaluateRuleSetAgainstEvent(rule, object) {
     }
 
     return leftHand;
+}
+
+function calculateBoolean(variable, comparison, value) {
+    switch(comparison) {
+        case 'EQUAL': return (variable === value); break;
+        case 'NOT EQUAL': return (variable !== value); break;
+        case 'GREATER THAN': return (variable > value); break;
+        case 'GREATER THAN OR EQUAL': return (variable >= value); break;
+        case 'LESS THAN': return (variable > value); break;
+        case 'LESS THAN OR EQUAL': return (variable >= value); break;
+        default: throw new Error('Comparison value invalid', comparison);
+    }
 }
 
 function checkAllRulesListenersComplete(ruleSet) {
@@ -195,6 +216,11 @@ function checkAllRulesListenersComplete(ruleSet) {
 }
 
 function setupObjectListeners(scope, ruleSet, completed) {
+
+    if(scope.mode === 'normal') {
+        return;
+    }
+
     let relatedId = makeId();
     function createListener(rule) {
         if(rule.rule_type === 'LISTENER') {
@@ -215,6 +241,7 @@ function setupObjectListeners(scope, ruleSet, completed) {
             switch(rule.type) {
                 case 'EVENT': addDomEventListener(rule.iFrame, rule.element, rule.listenFor, callback, relatedId); break;
                 case 'ATTRIBUTE': addAttributeListener(rule.iFrame, rule.element, rule.listenFor, callback, relatedId); break;
+                case 'SCOPE': addScopeWatcher(scope, rule.variable, rule.comparison, rule.value, callback, relatedId); break;
             }
         }
 
@@ -234,6 +261,9 @@ function removeAllListeners() {
         } else if (el.type === 'MutationObserver') {
             el.observer.disconnect();
             openListeners.splice(i, 1);
+        } else if (el.type === 'ScopeWatcher') {
+            el.deregister();
+            openListeners.splice(i, 1);
         }
     }
 }
@@ -248,12 +278,20 @@ function removeRelatedListeners(relatedId) {
             } else if (el.type === 'MutationObserver') {
                 el.observer.disconnect();
                 openListeners.splice(i, 1);
+            } else if (el.type === 'ScopeWatcher') {
+                el.deregister();
+                openListeners.splice(i, 1);
             }
         }
     }
 }
 
 function setupStageListeners(scope, listenerDetails, pageNumber, stepNumber) {
+
+    if(scope.mode === 'normal') {
+        return;
+    }
+
     let relatedId = makeId();
     let callback = () => {
         scope.tutorial[pageNumber].steps[stepNumber].complete = true;
@@ -270,6 +308,7 @@ function setupStageListeners(scope, listenerDetails, pageNumber, stepNumber) {
         switch(listenerDef.type) {
             case 'EVENT': addDomEventListener(listenerDef.iFrame, listenerDef.element, listenerDef.listenFor, callback, relatedId); break;
             case 'ATTRIBUTE': addAttributeListener(listenerDef.iFrame, listenerDef.element, listenerDef.listenFor, callback, relatedId); break;
+            case 'SCOPE': addScopeWatcher(scope, rule.variable, rule.comparison, rule.value, callback, relatedId); break;
         }
     })
 }
@@ -293,7 +332,6 @@ function addDomEventListener(frameId, listenElement, listenType, callback, relat
     }
 
     var listenAction = () => {
-        callback();
         for(var i = 0; i < listenTo.length; i++) {
             openListeners.forEach((el, index, object) => {
                 if (el.id === listenerId) {
@@ -302,6 +340,7 @@ function addDomEventListener(frameId, listenElement, listenType, callback, relat
             });
             listenTo[i].removeEventListener(listenType, listenAction);
         }
+        callback();
     };
 
     for(var i = 0; i < listenTo.length; i++) {
@@ -324,13 +363,13 @@ function addAttributeListener(frameId, listenElement, attributeToListen, callbac
         mutations.forEach(function(mutation) {
           if (mutation.type == 'attributes') {
             if (mutation.attributeName === attributeToListen) {
-                callback();
                 openListeners.forEach((el, index, object) => {
                     if (el.id === listenerId) {
                         object.splice(index, 1);
                     }
                 });
                 observer.disconnect();
+                callback();
             }
           }
         });
@@ -344,7 +383,13 @@ function addAttributeListener(frameId, listenElement, attributeToListen, callbac
     }
 
     if (listenElement.startsWith('#')) {
-        listenTo = [listenIn.getElementById(listenElement.substr(1))];
+        var el = listenIn.getElementById(listenElement.substr(1));
+        if (el) {
+            listenTo = [el];
+        } else {
+            console.log('LISTEN IN', listenIn.getElementsByTagName('button'))
+            throw new Error(`Element with ID ${listenElement.substr(1)} does not exist`);
+        }
 
     } else if (listenElement.startsWith('.')) {
         listenTo = listenIn.getElementsByClassName(listenElement.substr(1));
@@ -363,6 +408,28 @@ function addAttributeListener(frameId, listenElement, attributeToListen, callbac
             attributes: true //configure it to listen to attribute changes
         });
     }
+}
+
+function addScopeWatcher(scope, variable, comparison, value, callback, relatedId) {
+    var watcher = scope.$watch(variable, (newValue) => {
+        if (calculateBoolean(newValue, comparison, value)) {
+            openListeners.forEach((el, index, object) => {
+                if (el.id === listenerId) {
+                    el.deregister();
+                    object.splice(index, 1);
+                }
+            });
+            callback();
+        }
+    });
+    
+    var listenerId = makeId();
+    openListeners.push({
+        type: 'ScopeWatcher',
+        deregister: watcher,
+        id: listenerId,
+        relatedId: relatedId
+    });
 }
 
 function makeId() {

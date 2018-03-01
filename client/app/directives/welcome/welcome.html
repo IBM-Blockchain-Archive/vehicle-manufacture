@@ -1,0 +1,25 @@
+<div ng-class="{'hidden': mode !== 'start'}" id="welcome" >
+    <div id="message" >
+        <div class="content" >
+            <div class="close" ng-click="startNormal()" ></div>
+            <div class="title" >
+                IBP: Develop
+                <br />
+                Vehicle Manufacture Sample App
+            </div>
+            <div class="text" >
+                Welcome to the Vehicle Manufacture Sample Application. This was built using <a href="#" >IBM Blockchain Platform: Develop.</a>
+                <br />
+                <strong class="new-section" >What can I do in this web application?</strong>
+                This application showcases the simple benifits of IBM Blockchain within the scenario of buying and manufacturing a vehicle. You will be able to see the view of vehicle buyer: Aruim Buy, the manufacturer: Arium Manufacture and regulator: Vehicle & Driver Authority (VDA).
+                <br />
+                <br />
+                We recommend following our step-by-step tutorial first. After completing this, you’ll be able to have a go without and explore the platform on which this was built.
+            </div>
+        </div>
+        <div class="footer" >
+            <button class="main" ng-click="startTutorial()" >Start tutorial</button>
+            <button ng-click="startNormal()">Try without tutorial</button>
+        </div>
+    </div>
+</div>

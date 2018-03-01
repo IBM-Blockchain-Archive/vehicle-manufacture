@@ -152,9 +152,7 @@
             }
 
             &.complete {
-                td {
-                    background-color: limegreen;
-                }
+                opacity: 0.5;
             }
 
             .title {
@@ -178,9 +176,8 @@
             font-weight: @light;
 
             &:disabled, &[disabled] {
-                opacity: 0.5;
-                background-color: transparent!important;
-                color: @bright-blue!important;
+                opacity: 0;
+                cursor: default;
             }
 
             &:hover {

@@ -67,7 +67,7 @@ class TutorialParser {
                     }
                 });
                 
-                step.text = text.join('<br />');
+                step.text = text.join('<br /><br />');
                 step.complete = false;
 
 
@@ -140,15 +140,25 @@ class TutorialParser {
     }
 
     parseListener(listenerAsArray) {
-        let listener = {
-            type: listenerAsArray[1],
-            iFrame: listenerAsArray[2],
-            element: listenerAsArray[3],
-            listenFor: listenerAsArray[4]
-        }
+        let listener;
+        if(listenerAsArray[1] !== 'SCOPE') {
+            listener = {
+                type: listenerAsArray[1],
+                iFrame: listenerAsArray[2],
+                element: listenerAsArray[3],
+                listenFor: listenerAsArray[4]
+            }
 
-        if (listener.iFrame === '') {
-            delete listener.iFrame;
+            if (listener.iFrame === '') {
+                delete listener.iFrame;
+            }
+        } else {
+            listener = {
+                type: listenerAsArray[1],
+                variable: listenerAsArray[3],
+                comparison: listenerAsArray[2],
+                value: listenerAsArray[4]
+            }
         }
 
         return listener;

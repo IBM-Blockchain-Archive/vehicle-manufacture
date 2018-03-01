@@ -15,14 +15,22 @@ Click 'BUILD YOUR CAR'
 Using hidden values in the markdown you can specify when notifications should appear, the buttons for a page and when stages on a page should be marked as complete. The hidden values are denoted using [//]: # ('<YOUR_RULE>') on a new line.
 
 ## Specifying a listener
-Listeners are used to mark when a stage on a page is complete and should be added below a second header (\#\#) before the next header of any level. Listeners listen against the dom and can be specified to look against an element in the tutorial dom or within one of the iframes. Listeners can be used to listen for an event happening to an element such as it being clicked or its attribute mutating. You can have 0 or more listeners in a section however it will be marked as complete when any one of the listeners' event's happens. The format of a listen is as follows:
+Listeners are used to mark when a stage on a page is complete and should be added below a second header (\#\#) before the next header of any level. Listeners can listen against the dom and can be specified to look against an element in the tutorial dom or within one of the iframes. They can also be used to listen against variables in the scope. Listeners can be used to listen for an event happening to an element such as it being clicked or its attribute mutating else they can be used to listen for a scope value changing. You can have 0 or more listeners in a section however it will be marked as complete when any one of the listeners' event's happens. The format of a listener is as follows:
 
+DOM Listener: 
 `[//]: # ('LISTENER | <TYPE> | <IFRAME_ID> | <ELEMENT> | <LISTENING_FOR>')`
 
 - \<TYPE> - the type of listener being created. Can be EVENT or ATTRIBUTE. Use EVENT to listen for events such as 'click'. Use ATTRIBUTE for listening to attribute mutations e.g. a button being disabled.
 - <IFRAME_ID> - the ID of the iframe to listen in. If the element being listened against is not in an iframe leave this blank.
 - \<ELEMENT> - the class or ID name of the element to listen for. Precede class names with . and ID names with \#.
 - <LISTENING_FOR> - The event being listened for e.g. click or the attribute to watch mutations on e.g. disabled. The list of events that can fill this valuefor EVENT type listeners matches those that can be used on dom elements in addEventListener of JavaScript.
+
+Scope Listener:
+`[//]: # ('LISTENER | SCOPE | <COMPARISON> | <VARIABLE_NAME> | <VALUE>')`
+
+- <\COMPARISON> - the type of comparison to use for evaluating a boolean between scope variable's value and <VALUE>. Can be any of: EQUAL, NOT EQUAL, GREATER THAN, GREATER THAN OR EQUAL, LESS THAN or LESS THAN OR EQUAL.
+- <VARIABLE_NAME> - the name of the scope variable to listen for changes on.
+- <VALUE> - The value to be used for checking against the scope variable's value.
 
 ## Specifying a button
 At the end of each page of the tutorial a button is used to move the user onto the next page of the tutorial and if required display another application in the iFrame. Therefore each top header should contain a button hidden value before the next top header section starts. The format of these rules are as follows: 

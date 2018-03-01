@@ -1,4 +1,4 @@
-<div class="notification {{ notification.position.vertical }} {{ notification.position.horizontal }} {{ notification.animate }}" ng-repeat="notification in notifications" >
+<div ng-if="mode === 'tutorial'" class="notification {{ notification.position.vertical }} {{ notification.position.horizontal }} {{ notification.animate }}" ng-repeat="notification in notifications" >
     <div class="close" ng-click="removeNotification(notification.title, notification.text, notification.position.vertical, notification.position.horizontal, true)" ></div>
     <div ng-if="notification.title" class="title">{{ notification.title }}</div>
     {{ notification.text }}

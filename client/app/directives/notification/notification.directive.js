@@ -37,62 +37,72 @@ angular.module('tutorial')
       });
 
       scope.$on('addNotification', (event, data) => {
-        scope.addNotification(data[0]);
+        scope.addNotifications([data[0]]);
+      });
+
+      scope.$on('addNotifications', (event, data) => {
+        scope.addNotifications(data[0]);
       })
 
-      scope.addNotification = (passedNotification) => {
+      scope.addNotifications = (passedNotifications) => {
 
-        if(passedNotification.closed) {
-          return;
-        }
-
-        var title = passedNotification.title;
-        var text = passedNotification.text;
-        var vertical = passedNotification.vertical;
-        var horizontal = passedNotification.horizontal;
-
-        vertical = vertical.toLowerCase();
-        horizontal = horizontal.toLowerCase();
-        var notification = {}
-        if (title) {
-          notification.title = title;
-        }
-        notification.text = text;
-
-        notification.basedOff = passedNotification;
-
-        if (!allowableVerticle.includes(vertical)) {
-          throw new Error('Invalid vertical value specified for notification.')
-        }
-
-        if (!allowableHorizontal.includes(horizontal)) {
-          throw new Error('Invalid horizontal value specified for notification.')
-        }
-        notification.animate = 'fade';
-
-        if(notification.basedOff.alreadyShown) {
-          notification.animate = 'none'
-        }
-
-        notification.position = {};
-        notification.position.vertical = vertical.toLowerCase();
-        notification.position.horizontal = horizontal.toLowerCase();
-
-        scope.notifications.forEach((el, index) => {
-          el.animate = 'none';
-
-          if (el.position.vertical === notification.position.vertical && el.position.horizontal === notification.position.horizontal) {
-            scope.notifications.splice(index, 1);
-
-            if(notification.animate != 'none') {
-              notification.animate = 'border';
-            }
+        passedNotifications.forEach((passedNotification) => {
+          if(passedNotification.closed) {
+            return;
           }
+  
+          var title = passedNotification.title;
+          var text = passedNotification.text;
+          var vertical = passedNotification.vertical;
+          var horizontal = passedNotification.horizontal;
+  
+          vertical = vertical.toLowerCase();
+          horizontal = horizontal.toLowerCase();
+          var notification = {}
+          if (title) {
+            notification.title = title;
+          }
+          notification.text = text;
+  
+          notification.basedOff = passedNotification;
+  
+          if (!allowableVerticle.includes(vertical)) {
+            throw new Error('Invalid vertical value specified for notification.')
+          }
+  
+          if (!allowableHorizontal.includes(horizontal)) {
+            throw new Error('Invalid horizontal value specified for notification.')
+          }
+          notification.animate = 'fade';
+  
+          if(notification.basedOff.alreadyShown) {
+            notification.animate = 'none'
+          }
+  
+          notification.position = {};
+          notification.position.vertical = vertical.toLowerCase();
+          notification.position.horizontal = horizontal.toLowerCase();
+  
+          scope.notifications.forEach((el, index) => {
+            if(el.basedOff.alreadyShown) {
+              el.animate = 'none';
+            }
+  
+            if (el.position.vertical === notification.position.vertical && el.position.horizontal === notification.position.horizontal) {
+              scope.notifications.splice(index, 1);
+  
+              if(notification.animate != 'none') {
+                notification.animate = 'border';
+              }
+            }
+          })
+          
+          setTimeout(() => {
+            notification.basedOff.alreadyShown = true;
+          }, 2000)
+  
+          scope.notifications.push(notification);
         })
-
-        notification.basedOff.alreadyShown = true;
-
-        scope.notifications.push(notification);
 
         if (!scope.$$phase) {
           scope.$apply();

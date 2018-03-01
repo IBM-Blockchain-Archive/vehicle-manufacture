@@ -1,0 +1,168 @@
+@import "../../../assets/stylesheets/colours.less";
+@import "../../../assets/stylesheets/font.less";
+
+#welcome {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(27, 40, 52, 0.9);
+
+    &.hidden {
+        display: none;
+    }
+    #message {
+        width: 700px;
+        background-color: @white;
+        padding: 50px;
+        box-sizing: border-box;
+        border-radius: 3px;
+        box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        max-height: 80%;
+
+        .content {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+
+            .close {
+                position: absolute;
+                right: -20px;
+                top: -20px;
+                cursor: pointer;
+                height: 12px;
+                width: 12px;
+                opacity: 0.5;
+        
+                &:before, &:after {
+                    position: absolute;
+                    left: 6px;
+                    content: ' ';
+                    height: 12px;
+                    width: 2px;
+                    background-color: @black;
+                }
+        
+                &:before {
+                    transform: rotate(45deg);
+                }
+                &:after {
+                    transform: rotate(-45deg);
+                }
+        
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            .title {
+                display: table; // FF FIX FOR IT NOT SCROLLING
+                font-weight: @regular;
+                font-size: 1.5em;
+                margin-bottom: 30px;
+            }
+
+            .text {
+                min-height: 0px;
+                flex: 1;
+                overflow: auto;
+
+                &::-webkit-scrollbar {
+                    width: 20px;
+                }
+                
+                &::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                
+                &::-webkit-scrollbar-thumb {
+                    border-radius: 5px;
+                    box-shadow: inset 0 0 10px 10px transparent;
+                    border: solid 5px transparent;
+                }
+        
+                &:hover {
+                    &::-webkit-scrollbar {
+                        width: 20px;
+                    }
+                    
+                    &::-webkit-scrollbar-track {
+                        background: transparent;
+                    }
+                    
+                    &::-webkit-scrollbar-thumb {
+                        border-radius: 5px;
+                        box-shadow: inset 0 0 10px 10px @mid-grey;
+                        border: solid 5px transparent;
+                    }
+                }
+            }
+
+            a:link {
+                color: @dark-grey-blue;
+                text-decoration: underline;
+            }
+            a:active {
+                color: @dark-grey-blue;
+                text-decoration: underline;
+            }
+            a:visited {
+                color: @dark-grey-blue;
+                text-decoration: underline;
+            }
+            a:hover {
+                text-decoration: none;
+            }
+
+            strong {
+                font-weight: @medium;
+            }
+
+            .new-section {
+                display: block;
+                margin: 1em 0;
+            }
+        }
+
+        .footer {
+            margin-top: 30px;
+            button {
+                display: inline-block;
+                padding: 10px;
+                background-color: transparent;
+                border: 1px solid @dark-grey-blue;
+                cursor: pointer;
+                color: @dark-grey-blue;
+                font-size: 1em;
+                font-family: @plainFont;
+                font-weight: @light;
+                margin-right: 15px;
+            }
+
+            button:hover {
+                background-color: @dark-grey-blue;
+                color: @white;
+            }
+
+            .main {
+                background-color: @dark-grey-blue;
+                color: @white;
+            }
+
+            .main:hover {
+                color: @dark-grey-blue;
+                background-color: transparent;
+            }
+        }
+    }
+}

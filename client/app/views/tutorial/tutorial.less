@@ -41,45 +41,79 @@
                     height: 0!important;
                     width: 0!important;
                     padding: 0!important;
+
+                    img {
+                        display: none;
+                    }
                 }
 
                 &.small {
                     height: 800px;
                     width: 450px;
-                    
-                    &:not(.hidden) {
-                        border: 3px solid @black;
-                    }
+                    position: relative;
+                    top: 25px;
 
+                    img {
+                        position: absolute;
+                        top: -71px;
+                        left: -29px;
+                        height: 894px;
+                        width: auto;
+                        pointer-events: none;
+                    }
                 }
 
-                @media only screen and (min-height : 750px) and (max-height : 1000px) {
+                @media only screen and (min-height : 800px) and (max-height : 1000px) {
                     &.small {
                         height: 667px;
                         width: 375px;
+
+                        img { // VALUES ARE EQUAL TO ORIGINAL VALUES/(SMALL ORIGINAL HEIGHT/SMALL MEDIA HEIGHT)
+                            top: -59px;
+                            left: -24px;
+                            height: 745px;
+                        }
                     }
                 }
 
-                @media only screen and (min-height : 650px) and (max-height : 750px) {
+                @media only screen and (min-height : 700px) and (max-height : 800px) {
                     &.small {
                         height: 600px;
                         width: 338px;
+
+                        img {
+                            top: -53.25px;
+                            left: -21.75px;
+                            height: 670.5px;
+                        }
                     }
                 }
 
-                @media only screen and (min-height : 550px) and (max-height : 650px) {
+                @media only screen and (min-height : 600px) and (max-height : 700px) {
                     &.small {
                         padding: 0;
                         height: 500px;
                         width: 281px;
+
+                        img {
+                            top: -44.375px;
+                            left: -18.125px;
+                            height: 558.75px;
+                        }
                     }
                 }
 
-                @media only screen and (min-height : 0px) and (max-height : 550px) {
+                @media only screen and (min-height : 0px) and (max-height : 600px) {
                     &.small {
                         padding: 0;
                         height: 390px;
                         width: 220px;
+
+                        img {
+                            top: -34.6125px;
+                            left: -14.1375px;
+                            height: 435.825px;
+                        }
                     }
                 }
 

@@ -66,22 +66,20 @@ app.get('/assets/config.json', (req, res) => {
   })
 })
 
-var linkRegEx = new RegExp('\s*<link');
-
-var manufactureIndexHTML = fs.readFileSync(path.join(__dirname, '../node_modules/vehicle-manufacture-manufacturing/client/index.html')).toString().split('/n');
+var manufactureIndexHTML = fs.readFileSync(path.join(__dirname, '../node_modules/vehicle-manufacture-manufacturing/client/index.html')).toString().split('\n');
 manufactureIndexHTML.some((line, index) => {
-  if(linkRegEx.test(line)) {
+  if(line.indexOf('<link') > -1) {
     manufactureIndexHTML.splice(index, 0, '<link rel="stylesheet" href="/custom-application-styles/manufacturer.css">');
-    return;
+    return true;
   }
 })
 manufactureIndexHTML = manufactureIndexHTML.join('\n');
 
-var regulatorIndexHTML = fs.readFileSync(path.join(__dirname, '../node_modules/vehicle-manufacture-vda/client/index.html')).toString().split('/n');
+var regulatorIndexHTML = fs.readFileSync(path.join(__dirname, '../node_modules/vehicle-manufacture-vda/client/index.html')).toString().split('\n');
 regulatorIndexHTML.some((line, index) => {
-  if(linkRegEx.test(line)) {
+  if(line.indexOf('<link') > -1) {
     regulatorIndexHTML.splice(index, 0, '<link rel="stylesheet" href="/custom-application-styles/regulator.css">');
-    return;
+    return true;
   }
 })
 regulatorIndexHTML = regulatorIndexHTML.join('\n');
