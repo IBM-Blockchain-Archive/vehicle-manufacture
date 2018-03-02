@@ -59,3 +59,5 @@ typings/
 
 # temporary fix remove composer-sample-applications
 composer-sample-applications
+
+package-lock.json
