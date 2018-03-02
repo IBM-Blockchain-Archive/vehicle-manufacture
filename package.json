@@ -5,6 +5,7 @@
   "description": "Vehicle Lifecycle - Tutorial",
   "main": "index.js",
   "scripts": {
+    "preinstall": "./getSampleApps.sh",
     "postinstall": "bower install",
     "start": "node server/app.js"
   },
@@ -17,9 +18,9 @@
     "express": "^4.15.2",
     "express-less": "^0.1.0",
     "request": "^2.81.0",
-    "vehicle-manufacture-car-builder": "file:../../Composer-Dev/composer-sample-applications/packages/vehicle-manufacture-car-builder",
-    "vehicle-manufacture-manufacturing": "file:../../Composer-Dev/composer-sample-applications/packages/vehicle-manufacture-manufacturing",
-    "vehicle-manufacture-vda": "file:../../Composer-Dev/composer-sample-applications/packages/vehicle-manufacture-vda",
+    "vehicle-manufacture-car-builder": "file:composer-sample-applications/packages/vehicle-manufacture-car-builder",
+    "vehicle-manufacture-manufacturing": "file:composer-sample-applications/packages/vehicle-manufacture-manufacturing",
+    "vehicle-manufacture-vda": "file:composer-sample-applications/packages/vehicle-manufacture-vda",
     "ws": "^2.3.1"
   },
   "devDependencies": {

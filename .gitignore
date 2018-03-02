@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# temporary fix remove composer-sample-applications
+composer-sample-applications
