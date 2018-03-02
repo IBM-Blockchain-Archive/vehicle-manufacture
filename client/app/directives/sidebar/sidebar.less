@@ -159,6 +159,41 @@
                 margin-bottom: 25px;
                 font-weight: @bold;
             }
+
+            button {
+                display: inline-block;
+                padding: 15px;
+                background-color: transparent;
+                border: 1px solid @bright-blue;
+                cursor: pointer;
+                color: @bright-blue;
+                font-size: 1em;
+                font-family: @plainFont;
+                font-weight: @light;
+    
+                &:hover {
+                    background-color: @bright-blue;
+                    color: @dark-grey-blue;
+                }
+            }
+
+            a {
+                &:link {
+                    color: @white;
+                    text-decoration: underline;
+                }
+                &:active {
+                    color: @white;
+                    text-decoration: underline;
+                }
+                &:visited {
+                    color: @white;
+                    text-decoration: underline;
+                }
+                &:hover {
+                    text-decoration: none;
+                }
+            }
         }
 	}
 	

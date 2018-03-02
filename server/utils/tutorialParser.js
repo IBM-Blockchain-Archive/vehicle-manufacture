@@ -59,11 +59,33 @@ class TutorialParser {
 
                 subsection.forEach((line) => {
                     if(line.substr(0, 6) !== '[//]: ') {
+                        let linkRegEx = /\[.*\]\(.*\)/g;
+                        
+                        if (linkRegEx.test(line)) {
+                            let matches = line.match(linkRegEx);
+                            matches.forEach((match) => {
+                                const linkText = match.substring(1, match.lastIndexOf(']'));
+                                const linkLocation = match.substring(match.indexOf('(')+1, match.length-1);
+                                line = line.replace(match, `<a target="_blank" href="${linkLocation}" >${linkText}</a>`);
+                            })
+                        }
+
                         text.push(line);
                     } else {
                         let inBrackets = line.match(/\(([^)]+)\)/)[1];
                         inBrackets = inBrackets.substring(1, inBrackets.length-1); // REMOVE QUOTES
-                        hidden.push(inBrackets);
+
+                        const inBracketsAsArray = inBrackets.split('|').map((el) => { return el.trim(); });
+                        const type = inBracketsAsArray[0];
+
+                        if (type === 'INLINE_BUTTON') {
+                            const buttonText = inBracketsAsArray[1];
+                            const call = this.parseFunctionSet(inBracketsAsArray.slice(2).join('|'));
+                            
+                            text.push(`<button ng-click="${call}" >${buttonText}</button>`);
+                        } else {
+                            hidden.push(inBrackets);
+                        }
                     }
                 });
                 
@@ -163,6 +185,36 @@ class TutorialParser {
 
         return listener;
 
+    }
+
+    parseFunctionSet(func) {
+        func = func.replace('FUNCTION =>', '');
+        func = func.trim();
+        
+        if (func.charAt(0) !== '[' || func.slice(-1) !== ']') {
+            throw new Error('Invalid function defintion');
+        }
+
+        func = func.slice(1, -1);
+
+        let funcAsArray = func.split('|');
+
+        let functionName = funcAsArray[0].trim();
+
+        let args = funcAsArray.slice(1).join('|');
+        args = args.replace('ARGS =>', '');
+        args = args.trim();
+
+        if (args.charAt(0) !== '[' || args.slice(-1) !== ']') {
+            throw new Error('Invalid args defintion');
+        }
+
+        args = args.slice(1, -1);
+        args = args.split('|');
+
+        let call = `${functionName}(${args.join(',').trim()})`
+
+        return call;
     }
 
     parseRuleSet(rules, expected_type) {

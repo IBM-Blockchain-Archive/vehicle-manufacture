@@ -27,7 +27,7 @@ To start the car manufacture process click the yellow ‘Start manufacture’ bu
 
 # Regulating the network
 ## Step 3
-Along the top of the dashboard view, you can see all the new vehicles which need to be assigned VIN numbers. The final transaction is the vehicle asset which has been assigned a VIN.
+Along the top of the dashboard view, you can see the total number of registered vehicles and in the table at the bottom the list of transactions that have occured on the blockchain.
 
 [//]: # ('NOTIFICATION | | You are now Debbie, the VDA Officer at Vehicle & Drivers Authority. You regulate car manufacture using a web based application.  | TOP | RIGHT | CREATE_WHEN => [] | DESTROY_WHEN => []')
 
@@ -43,7 +43,11 @@ Paul is kept updated within the Arium phone application of the status of his ord
 ## Next Steps
 If you enjoyed this tutorial, why not try ordering another vehicle, but on your own?
 
+[//]: # ('INLINE_BUTTON | Order another | FUNCTION => [ startAgain | ARGS => [] ]')
+
 ## Want to do it again or show a friend?
 
+[//]: # ('INLINE_BUTTON | Reset tutorial | FUNCTION => [ reset | ARGS => [] ]')
+
 ## Want to get more techy?
-We built this sample app on [IBM Blockchain Platform Develop]()
+We built this sample app on [IBM Blockchain Platform Develop](#)

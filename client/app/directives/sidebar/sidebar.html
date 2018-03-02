@@ -30,7 +30,7 @@
         <div ng-if="mode === 'tutorial'" id="tutorial-text" >
             <div class="holder" ng-class="{'complete': item.complete}" ng-repeat="item in tutorial[tutorialPage].steps">
                 <div class="title" ng-bind-html="item.title"></div>
-                <div ng-bind-html="item.text"></div>
+                <div ng-bind-html="item.text" init-bind></div>
             </div>
         </div>
         <div ng-if="mode === 'tutorial'" id="actions">

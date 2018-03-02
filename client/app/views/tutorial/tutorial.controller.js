@@ -69,12 +69,31 @@ angular.module('tutorial')
         localStorage.setItem("ignoreTxnsBefore", new Date());
 
         document.getElementById('carBuilder').contentWindow.location.reload();
+        document.getElementById('manufacturer').contentWindow.location.reload();
+        document.getElementById('regulator').contentWindow.location.reload();
 
         $scope.changePage('/car-builder', 0);
 
         awaitIFrameLoad($scope, $rootScope);
     };
     
+    $scope.startAgain = () => {
+        $scope.location = '/car-builder';
+        $scope.mode = 'normal';
+        $scope.ready = false;
+
+        removeAllListeners();
+
+        if (!$scope.$$phase) {
+            scope.$apply();
+        }
+
+        document.getElementById('carBuilder').contentWindow.location.reload();
+        document.getElementById('manufacturer').contentWindow.location.reload();
+        document.getElementById('regulator').contentWindow.location.reload();
+
+        awaitIFrameLoad($scope, $rootScope);
+    }
 
     $scope.$on('$destroy', function () {
         destroyed = true;
@@ -83,7 +102,20 @@ angular.module('tutorial')
     $scope.$watch('mode', () => {
         $cookies.put('mode', $scope.mode);
     });
-}]);
+}])
+
+.directive('initBind', function($compile) {
+    return {
+            restrict: 'A',
+            link : function (scope, element, attr) {
+                attr.$observe('ngBindHtml',function(){ // LISTEN TO BIND TO ALLOW FOR NG-CLICKS IN HTML BEING BOUND
+                    if(attr.ngBindHtml){
+                         $compile(element[0].children)(scope);
+                    }
+                })
+            }
+        };
+    })
 
 var openListeners = [];
 
@@ -128,6 +160,10 @@ function openWebSocket($scope, $rootScope) {
 
     websocket.onmessage = function (event) {
         let message = JSON.parse(event.data);
+
+        if ($scope.mode === 'normal') {
+            return;
+        }
         let button = $scope.tutorial[$scope.tutorialPage].button;
         if (button.enablementRule && button.enablementRule.rule_type === 'REST_EVENT' && evaluateRuleSetAgainstEvent(button.enablementRule, message)) {
             button.disabled = false;

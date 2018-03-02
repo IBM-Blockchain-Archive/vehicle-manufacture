@@ -10,6 +10,8 @@ The tutorial is written in markdown with top headers (\#) denoting the different
 
 Click 'BUILD YOUR CAR'
 
+Links can be specified using the usual markdown format. Warning specifying a link of /LICENSE.txt will take the user to a different location when clicked viewing the markdown on github compared to clicking the link within the tutorial application so full URL paths should be used. 
+
 # Using hidden values
 
 Using hidden values in the markdown you can specify when notifications should appear, the buttons for a page and when stages on a page should be marked as complete. The hidden values are denoted using [//]: # ('<YOUR_RULE>') on a new line.
@@ -31,6 +33,14 @@ Scope Listener:
 - <\COMPARISON> - the type of comparison to use for evaluating a boolean between scope variable's value and <VALUE>. Can be any of: EQUAL, NOT EQUAL, GREATER THAN, GREATER THAN OR EQUAL, LESS THAN or LESS THAN OR EQUAL.
 - <VARIABLE_NAME> - the name of the scope variable to listen for changes on.
 - <VALUE> - The value to be used for checking against the scope variable's value.
+
+## Specifying an inline button
+Inline buttons are buttons that appear within the text of the step. These should be added between the paragraphs they should appear between in the application. They MUST be written on new lines like any other of the hidden elements. Inline buttons should have specified a function with the action they perform. The format of inline buttons is as follows:
+
+`[//]: # ('INLINE_BUTTON | <BUTTON_TEXT> | <FUNCTION>')`
+
+- <BUTTON_CALL> - the text you wish to have in the button
+- \<FUNCTION> - the function you would like to be called. Must be preceded with `FUNCTION =>` followed by the function defined in the format specified in the [Defining functions](#functionDefinition) section of this document. 
 
 ## Specifying a button
 At the end of each page of the tutorial a button is used to move the user onto the next page of the tutorial and if required display another application in the iFrame. Therefore each top header should contain a button hidden value before the next top header section starts. The format of these rules are as follows: 
@@ -91,3 +101,11 @@ Rules are evaluated from right to left based on combines with such that if you h
 `[ REST_EVENT | $class | EQUAL | org.acme.vehicle_network.UpdateOrderStatusEvent | AND => [ REST_EVENT | orderStatus | EQUAL | DELIVERED ] ]`
 
 True when the rest server produces an event that has property $class with the value 'org.acme.vehicle_network.UpdateOrderStatusEvent' and that event also has the property orderStatus with the value 'DEVLIVERED'.
+
+## Defining functions<a name="functionsDefinition"></a>
+Function definitions are of the format:
+
+`[ <FUNCTION_NAME> | [ <ARGS> ] ]`
+
+- <FUNCTION_NAME> - the name of the function to be called. Must be the name of a function defined in the scope
+- \<ARGS> - the arguments to be passed into the function. Must be of format `ARGS =>` followed by the args set (the list of arguments seperated by pipes). Variables cannot be used as they will be sent as strings of the variable names. Arguments should be formatted as they would be in JavaScript e.g. with quotes.
