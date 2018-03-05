@@ -1,34 +1,31 @@
 ---
 stages:
-- name: MyStage
+- name: Deploy VehicleManufacture Application
   inputs:
-  - url: https://github.com/caroline-church/vehiclemanufacture-20180305144716218.git
-    type: git
+  - type: git
     branch: master
-    dir_name: null
+    service: ${SAMPLE_REPO}
   triggers:
   - type: commit
   properties:
   - name: SERVICE_INSTANCE_NAME
-    value: ''
+    value: '{{sin}}'
     type: text
   - name: ALIVE_SIGNAL
-    value: ''
+    value: '{{alive_signal}}'
     type: text
   - name: SAMPLE_REPO
-    value: ''
+    value: '{{SAMPLE_REPO}}'
     type: text
   jobs:
-  - name: Deploy
+  - name: deploy-vehicle-manufacture-app
     type: deployer
-    deploy_permission: DEV_IN_SPACE
-    deploy_type: cf
     target:
-      region_id: ibm:ys1:us-south
-      organization: caroline.church@uk.ibm.com
-      space: dev
-      application: vehiclemanufacture-20180305144716218
-    script: |2+
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |
        #!/bin/bash
             export IBP_NAME="ibm-blockchain-5-dev"
             export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
