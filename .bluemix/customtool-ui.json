@@ -1,0 +1,110 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"messages": {
+		"$i18n": "locales.yml"
+	},
+	"title": {
+		"$ref": "#/messages/customtool.title"
+	},
+	"description": {
+		"$ref": "#/messages/customtool.description"
+	},
+	"longDescription": {
+		"$ref": "#/messages/customtool.longDescription"
+	},
+	"type": "object",
+	"properties": {
+		"lifecyclePhase": {
+			"description": "lifecyclePhase here",
+			"type": "string"
+		},
+		"imageUrl": {
+			"description": "imageUrl here",
+			"type": "string"
+		},
+		"documentationUrl": {
+			"description": "documentationUrl here",
+			"type": "string"
+		},
+		"name": {
+			"description": "name here",
+			"type": "string"
+		},
+		"dashboard_url": {
+			"description": "dashboard_url here",
+			"type": "string"
+		},
+		"description": {
+			"description": "description here",
+			"type": "string"
+		},
+		"additional-properties": {
+			"description": "additional-properties here",
+			"type": "string"
+		}
+	},
+	"required": [
+		"type",
+		"lifecyclePhase"
+	],
+	"form": [
+		{
+			"type": "validator",
+			"url": "/devops/setup/bm-helper/helper.html"
+		},
+		{
+			"type": "text",
+			"title": {
+				"$ref": "#/messages/customtool.lifecyclePhase"
+			},
+			"key": "lifecyclePhase"
+		},
+		{
+			"type": "text",
+			"title": {
+				"$ref": "#/messages/customtool.imageUrl"
+			},
+			"key": "imageUrl"
+		},
+		{
+			"type": "text",
+			"readonly": true,
+			"title": {
+				"$ref": "#/messages/customtool.documentationUrl"
+			},
+			"key": "documentationUrl"
+		},
+		{
+			"type": "text",
+			"readonly": true,
+			"title": {
+				"$ref": "#/messages/customtool.name"
+			},
+			"key": "name"
+		},
+		{
+			"type": "text",
+			"readonly": true,
+			"title": {
+				"$ref": "#/messages/customtool.dashboard_url"
+			},
+			"key": "dashboard_url"
+		},
+		{
+			"type": "text",
+			"readonly": true,
+			"title": {
+				"$ref": "#/messages/customtool.description"
+			},
+			"key": "description"
+		},
+		{
+			"type": "text",
+			"readonly": true,
+			"title": {
+				"$ref": "#/messages/customtool.additional-properties"
+			},
+			"key": "additional-properties"
+		}
+	]
+}

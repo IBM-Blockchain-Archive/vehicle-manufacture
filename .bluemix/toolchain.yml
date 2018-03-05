@@ -1,0 +1,74 @@
+version: '2'
+messages:
+  $i18n: locales.yml
+template:
+  name:
+    $ref: "#/messages/template.name"
+  description:
+    $ref: "#/messages/template.description"
+  header: '![](toolchain.png)'
+  icon: "../public/imgs/favicon-36.png"
+  required:
+    - vehicle-build
+    - vehicle-repo
+  info:
+    git url: >-
+      [https://github.com/caroline-church/VehicleManufacture](https://github.com/caroline-church/VehicleManufacture)
+    git branch: >-
+      [master](https://github.com/caroline-church/VehicleManufacture/tree/master)
+toolchain:
+  name: 'vehiclemanufacture-tc-{{timestamp}}'
+  template:
+    getting_started:
+      $ref: "#/messages/template.gettingStarted"
+services:
+  vehicle-repo:
+    service_id: githubpublic
+    parameters:
+      repo_name: 'vehiclemanufacture-{{timestamp}}'
+      repo_url: 'https://github.com/caroline-church/VehicleManufacture'
+      type: clone
+      has_issues: false
+      enable_traceability: true
+  vehicle-build:
+    service_id: pipeline
+    parameters:
+      services:
+        - vehicle-repo
+      name: '{{services.vehicle-repo.parameters.repo_name}}'
+      ui-pipeline: true
+      sin: 'test'
+      configuration:
+        content:
+          $text: pipeline.yml
+        env:
+          SIN: 'testing'
+          SAMPLE_REPO: vehicle-repo
+          CF_APP_NAME: '{{form.pipeline.parameters.prod-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+        execute: true
+  vehicle-app:
+    service_id: customtool
+    parameters:
+      type: 'Vehicle'
+      lifecyclePhase: 'RUN'
+      imageUrl: 'https://github.com/caroline-church/VehicleManufacture/raw/master/public/imgs/favicon-36.png'
+      documentationUrl: 'https://github.com/caroline-church/VehicleManufacture'
+      name: 'Node.js Application'
+      dashboard_url: 'https://{{form.pipeline.parameters.prod-app-name}}.stage1.mybluemix.net/login'
+      description: 'This is your Vehicle Manufacturing node.js application. You do not need to modify anything.'
+      additional-properties: 'nope'
+form:
+  pipeline:
+    parameters:
+      prod-app-name: '{{services.vehicle-repo.parameters.repo_name}}'
+    schema:
+      $ref: deploy.json
+  #customtool:
+    #parameters:
+      #type: 'Marbles'
+      #imageUrl: https://github.com/dshuffma-ibm/marbles/raw/v4.0/public/imgs/favicon-36.png
+    #schema:
+      #$ref: customtool-ui.json

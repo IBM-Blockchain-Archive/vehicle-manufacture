@@ -1,0 +1,22 @@
+<svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <symbol viewBox="0 0 64 64" id="svg_4" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+    <style>.cls-1{fill:#4178be;}.cls-2{fill:#fff;}.cls-3{fill:#5aaafa;}.cls-4{fill:#2d3f4a;}</style>
+    <symbol viewBox="0 0 32 32" id="svg_3">
+     <path d="m16.11,9.43l-6,3.27l0,6.6l6,3.27l6,-3.27l0,-6.6l-6,-3.27zm-0.25,11.86l-4.75,-2.59l0,-5.2l4.75,2.16l0,5.63zm-4.41,-8.19l4.66,-2.54l4.66,2.54l-4.66,2.12l-4.66,-2.12zm9.66,5.59l-4.75,2.59l0,-5.62l4.75,-2.16l0,5.2l0,-0.01z" class="cls-4"/>
+     <polygon points="11.11 18.7 15.86 21.29 15.86 15.66 11.11 13.5 11.11 18.7" class="cls-3"/>
+     <polygon points="16.36 21.29 21.11 18.7 21.11 13.5 16.36 15.66 16.36 21.29" class="cls-3"/>
+     <polygon points="16.11 15.23 20.77 13.11 16.11 10.57 11.46 13.11 16.11 15.23" class="cls-3"/>
+    </symbol>
+   </defs>
+   <title>IBM_Blockchain_BMX_icon</title>
+   <use xlink:href="#svg_3" height="64" width="64" id="svg_2"/>
+  </symbol>
+ </defs>
+ <g>
+  <title>Layer 1</title>
+  <use x="-185.2" y="-127.6" transform="matrix(2.4502211809158325,0,0,2.2776654362678523,8.073277324438095,-15.379487735979637) " xlink:href="#svg_4" id="svg_5"/>
+  <g id="svg_6"/>
+ </g>
+</svg>
