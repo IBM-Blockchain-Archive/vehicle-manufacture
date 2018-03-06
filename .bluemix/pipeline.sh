@@ -4,39 +4,6 @@ export IBP_NAME="ibm-blockchain-5-dev"
 export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
 export VCAP_KEY_NAME="Credentials-1"
 
-#      export IBP_NAME="Blockchain"
-#export IBP_PLAN="ibm-blockchain-plan-v1-ga1-dev"
-#     export SERVICE_INSTANCE_NAME="Blockchain-i9"
-# export VCAP_KEY_NAME="Credentials-1"
-
-#printf "\n ----- admin-prive.pem ---- \n"
-#    echo -----BEGIN PRIVATE KEY-----  > admin-priv.pem
-#echo MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgktxsS/ykOJ3ssvB9 >> admin-priv.pem
-#echo /RO8cPZRhoYE4Pv7k/SN03uX8ByhRANCAAR4/Edc4XsoqlLDMTXrwxHmUx6CUIY8 >> admin-priv.pem
-#echo QIGrkqNxcz21QZZ1sYq/YdtjnYcBqo7gv1Y2ui1kdsHr4Ia26bTf6A7l >> admin-priv.pem
-#echo -----END PRIVATE KEY----- >> admin-priv.pem
-#     cat admin-priv.pem
-
-#printf "\n ----- admin-pub.pem ---- \n"
-#echo -----BEGIN CERTIFICATE----- > admin-public.pem
-#echo MIIBjTCCATOgAwIBAgIUIkltg0/UgO0K9MVMEPwouxaSQoowCgYIKoZIzj0EAwIw >> admin-public.pem
-#echo GzEZMBcGA1UEAxMQYWRtaW5QZWVyT3JnMkNBMTAeFw0xODAxMjUxMTE0MDBaFw0x >> admin-public.pem
-#echo OTAxMjUxMTE0MDBaMBAxDjAMBgNVBAMTBWFkbWluMFkwEwYHKoZIzj0CAQYIKoZI >> admin-public.pem
-#echo zj0DAQcDQgAEePxHXOF7KKpSwzE168MR5lMeglCGPECBq5KjcXM9tUGWdbGKv2Hb >> admin-public.pem
-#echo Y52HAaqO4L9WNrotZHbB6+CGtum03+gO5aNgMF4wDgYDVR0PAQH/BAQDAgeAMAwG >> admin-public.pem
-#echo A1UdEwEB/wQCMAAwHQYDVR0OBBYEFItz9w2Ssmo8blfHOjgsZJV5AzVEMB8GA1Ud >> admin-public.pem
-#echo IwQYMBaAFELuOBpdQ+BTMwWRZdwJrZD0rQHyMAoGCCqGSM49BAMCA0gAMEUCIQDq >> admin-public.pem
-#echo h/dWzJkA4vPEaEGpE4iG1V6XAvIbx31H3wSHC2QsGwIgLRyk3m23OPCE0uAV2ULO >> admin-public.pem
-#echo QCvS6JZtxj4eGMBZ/ioQxmg= >> admin-public.pem
-#echo -----END CERTIFICATE----- >> admin-public.pem
-# cat admin-public.pem
-
-# Test Code
-printf "\n --- Listing services for testing ---\n"
-cf services
-#cf services | sed -n 's/.*\(ibm-blockchain-plan-v1-prod\).*/\1/p'
-#cf services | sed -n 's/.*\(${SERVICE_INSTANCE_NAME}\).*/\1/p'
-
 printf "\n ---- Install node and nvm ----- \n"
 npm config delete prefix
      curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
@@ -94,7 +61,7 @@ nvm use node
   fi
 
   if [ "$CF_APP" == "" ]; then
-    echo "Error - bad script setup - CF_APP was not provided (Marbles application name)"
+    echo "Error - bad script setup - CF_APP was not provided (Vehicle manufacture application name)"
     export SCRIPT_ERROR="yep"
   fi
 
@@ -117,8 +84,6 @@ nvm use node
   printf "\n --- Getting service credentials ---\n"
   cf service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} > ./config/temp.txt
   tail -n +2 ./config/temp.txt > ./config/vehicle_tc.json
-  printf "\n --- testing temp.txt --- \n"
-  cat ./config/temp.txt -b
 
   curl -o jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
   chmod +x jq
@@ -126,13 +91,9 @@ nvm use node
 
   jq --raw-output '.credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
 
-  printf "\n --- testing vehicle_tc.json --- \n"
+  printf "\n --- connection-profile.json --- \n"
   cat ./config/connection-profile.json
 
-  # npm install -g connection-profile-converter
-  # connection-profile-converter --input ./config/vehicle_tc.json --output ./config/connection-profile.json --cf-service-key --name hlfv1
-
-  # cp ./config/vehicle_tc.json ./config/connection-profile.json
   export SECRET=$(jq --raw-output 'limit(1;.certificateAuthorities[].registrar[0].enrollSecret)' ./config/connection-profile.json)
   printf "\n secret ${SECRET} \n"
 
@@ -163,7 +124,7 @@ nvm use node
 # -----------------------------------------------------------
   printf "\n ---- Install composer-cli ----- \n "
 
-  npm install -g composer-cli@next-unstable
+  npm install -g composer-cli@next
 
   composer -v
 
@@ -173,7 +134,7 @@ nvm use node
   composer identity request --card ca --path ./credentials
   ls -la ./credentials
 
-  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem)
+  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
 
   printf "\n public cert ${PUBLIC_CERT} \n"
 
@@ -231,11 +192,11 @@ EOF
   composer runtime install -c adminCard -n vehicle-manufacture-network
 
   printf "\n --- start network --- \n"
-  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C admin-public.pem -f delete_me.card
+  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C admin-pub.pem -f delete_me.card
 
   composer card delete -n admin@vehicle-manufacture-network
 
-  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c admin-public.pem -k admin-priv.pem
+  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c admin-pub.pem -k admin-priv.pem
 
   composer card import -f ./admin@vehicle-manufacture-network.card
 
@@ -243,7 +204,7 @@ EOF
 # 8. Install Composer Playground
 # -----------------------------------------------------------
   printf "\n ---- Install composer-playground ----- \n"
-  npm install composer-playground@next-unstable
+  npm install composer-playground@next
 
   cd node_modules/composer-playground
 
@@ -256,7 +217,7 @@ EOF
 # -----------------------------------------------------------
   printf "\n----- Install REST server ----- \n"
   cd ../..
-  npm install composer-rest-server@next-unstable
+  npm install composer-rest-server@next
   cd node_modules/composer-rest-server
   cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 2 -m 512M --no-start
   cf start composer-rest-server-${CF_APP}
