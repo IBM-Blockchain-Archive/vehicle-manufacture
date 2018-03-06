@@ -198,52 +198,52 @@ EOF
 
   composer card import -f ./admin@vehicle-manufacture-network.card
 
-# -----------------------------------------------------------
-# 8. Install Composer Playground
-# -----------------------------------------------------------
-  printf "\n ---- Install composer-playground ----- \n"
-  npm install composer-playground@next
+## -----------------------------------------------------------
+## 8. Install Composer Playground
+## -----------------------------------------------------------
+#  printf "\n ---- Install composer-playground ----- \n"
+#  npm install composer-playground@next
+#
+#  cd node_modules/composer-playground
+#
+#  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
+#  cf set-env composer-playground-${CF_APP} COMPOSER_CONFIG '{"webonly":true}'
+#  cf start composer-playground-${CF_APP}
 
-  cd node_modules/composer-playground
-
-  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-  cf set-env composer-playground-${CF_APP} COMPOSER_CONFIG '{"webonly":true}'
-  cf start composer-playground-${CF_APP}
-
-# -----------------------------------------------------------
-# 9. Install Composer Rest Server
-# -----------------------------------------------------------
-  printf "\n----- Install REST server ----- \n"
-  cd ../..
-  npm install composer-rest-server@next
-  cd node_modules/composer-rest-server
-  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
-  cf start composer-rest-server-${CF_APP}
-  cd ../..
-
-# -----------------------------------------------------------
-# 10. Start the app
-# -----------------------------------------------------------
-
-  # Push app (don't start yet, wait for binding)
-  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
-  cf push ${CF_APP} --no-start
-  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
-
-  # Bind app to the blockchain service
-  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
-  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
-
-  # Start her up
-  printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
-  cf start ${CF_APP}
-
-# -----------------------------------------------------------
-# 11. Ping IBP that the application is alive  - [ Optional ]
-# -----------------------------------------------------------
-  if [ "$ALIVE_SIGNAL" != "" ]; then
-    printf "\n --- Sending signal that the demo is alive ---\n"
-    curl -s --head $ALIVE_SIGNAL | head -n 1 | grep "HTTP/1.[01] [23].."
-  fi
-
-  printf "\n\n --- We are done here. ---\n\n"
+## -----------------------------------------------------------
+## 9. Install Composer Rest Server
+## -----------------------------------------------------------
+#  printf "\n----- Install REST server ----- \n"
+#  cd ../..
+#  npm install composer-rest-server@next
+#  cd node_modules/composer-rest-server
+#  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
+#  cf start composer-rest-server-${CF_APP}
+#  cd ../..
+#
+## -----------------------------------------------------------
+## 10. Start the app
+## -----------------------------------------------------------
+#
+#  # Push app (don't start yet, wait for binding)
+#  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
+#  cf push ${CF_APP} --no-start
+#  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
+#
+#  # Bind app to the blockchain service
+#  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
+#  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
+#
+#  # Start her up
+#  printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
+#  cf start ${CF_APP}
+#
+## -----------------------------------------------------------
+## 11. Ping IBP that the application is alive  - [ Optional ]
+## -----------------------------------------------------------
+#  if [ "$ALIVE_SIGNAL" != "" ]; then
+#    printf "\n --- Sending signal that the demo is alive ---\n"
+#    curl -s --head $ALIVE_SIGNAL | head -n 1 | grep "HTTP/1.[01] [23].."
+#  fi
+#
+#  printf "\n\n --- We are done here. ---\n\n"
