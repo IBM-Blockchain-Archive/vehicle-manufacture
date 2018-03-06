@@ -153,23 +153,23 @@ nvm use node
 EOF
 
   cat request.json
-  echo curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-raw @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
-       curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-raw @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
+  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
+       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
 
   # sync certificates
   printf "\n ----- sync certificate ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} -d '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/$(CHANNEL}/sync
-       curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} -d '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
+  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/$(CHANNEL}/sync
+       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
 
   # stop peer
   printf "\n ----- stop peer ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} -d '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-       curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} -d '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
 
   # start peer
   printf "\n ----- start peer ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} -d '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
-       curl -X POST --header 'Content-Type: application/json --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} -d '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
 
 # -----------------------------------------------------------
 # 6. Create new card
@@ -208,7 +208,7 @@ EOF
 
   cd node_modules/composer-playground
 
-  cf push composer-playground-${CF_APP} -c "node cli.js" -i 2 -m 128M --no-start
+  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
   cf set-env composer-playground-${CF_APP} COMPOSER_CONFIG '{"webonly":true}'
   cf start composer-playground-${CF_APP}
 
@@ -219,7 +219,7 @@ EOF
   cd ../..
   npm install composer-rest-server@next
   cd node_modules/composer-rest-server
-  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 2 -m 512M --no-start
+  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
   cf start composer-rest-server-${CF_APP}
 
 # -----------------------------------------------------------
