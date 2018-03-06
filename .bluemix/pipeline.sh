@@ -158,45 +158,45 @@ EOF
   printf "\n ----- sync certificate ----- \n"
   echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
        curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
-
-  # stop peer
-  printf "\n ----- stop peer ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-
-  # start peer
-  printf "\n ----- start peer ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
-       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+#
+#  # stop peer
+#  printf "\n ----- stop peer ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+#
+#  # start peer
+#  printf "\n ----- start peer ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
 
 # -----------------------------------------------------------
 # 6. Create new card
 # -----------------------------------------------------------
-  printf "\n ---- Create admin card ----- \n "
-  composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
-
-  composer card import -f adminCard.card -n adminCard
+#  printf "\n ---- Create admin card ----- \n "
+#  composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
+#
+#  composer card import -f adminCard.card -n adminCard
 
 # -----------------------------------------------------------
 # 7. Deploy the network
 # -----------------------------------------------------------
-  printf "\n --- get network --- \n"
-  npm install vehicle-manufacture-network
-
-  printf "\n --- create archive --- \n"
-  composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
-
-  printf "\n --- install network --- \n"
-  composer runtime install -c adminCard -n vehicle-manufacture-network
-
-  printf "\n --- start network --- \n"
-  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
-
-  composer card delete -n admin@vehicle-manufacture-network
-
-  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
-
-  composer card import -f ./admin@vehicle-manufacture-network.card
+#  printf "\n --- get network --- \n"
+#  npm install vehicle-manufacture-network
+#
+#  printf "\n --- create archive --- \n"
+#  composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
+#
+#  printf "\n --- install network --- \n"
+#  composer runtime install -c adminCard -n vehicle-manufacture-network
+#
+#  printf "\n --- start network --- \n"
+#  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
+#
+#  composer card delete -n admin@vehicle-manufacture-network
+#
+#  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
+#
+#  composer card import -f ./admin@vehicle-manufacture-network.card
 
 ## -----------------------------------------------------------
 ## 8. Install Composer Playground
