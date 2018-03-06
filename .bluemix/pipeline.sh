@@ -131,16 +131,14 @@ nvm use node
   printf "\n ----- create ca card ----- \n"
   composer card create -f ca.card -p ./config/connection-profile.json -u admin -s ${SECRET}
   composer card import -f ca.card -n ca
-  composer identity request --card ca --path ./credentials
-  ls -la ./credentials
-
-  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
-
-  printf "\n public cert ${PUBLIC_CERT} \n"
 
 # -----------------------------------------------------------
 # 5. Add and sync admin cert
 # -----------------------------------------------------------
+  # request identity
+  composer identity request --card ca --path ./credentials
+  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
+
   # add admin cert
   printf "\n ----- add certificate ----- \n"
   cat << EOF > request.json
@@ -192,11 +190,11 @@ EOF
   composer runtime install -c adminCard -n vehicle-manufacture-network
 
   printf "\n --- start network --- \n"
-  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C admin-pub.pem -f delete_me.card
+  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
 
   composer card delete -n admin@vehicle-manufacture-network
 
-  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c admin-pub.pem -k admin-priv.pem
+  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
 
   composer card import -f ./admin@vehicle-manufacture-network.card
 
@@ -221,6 +219,7 @@ EOF
   cd node_modules/composer-rest-server
   cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
   cf start composer-rest-server-${CF_APP}
+  cd ../..
 
 # -----------------------------------------------------------
 # 10. Start the app
@@ -229,7 +228,7 @@ EOF
   # Push app (don't start yet, wait for binding)
   printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
   cf push ${CF_APP} --no-start
-  cf set-env ${CF_APP} REST_SERVER_CONFIG '{"webSocketURL": "ws://composer-rest-server-${CF_APP}", "httpURL": "composer-rest-server-${CF_APP}/api"}'
+  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
 
   # Bind app to the blockchain service
   printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
