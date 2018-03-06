@@ -97,8 +97,8 @@ nvm use node
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
   printf "\n --- Creating an instance of the Cloud object store ---\n"
-  cf create-service cloud-object-storage Lite storage-${SERVICE_INSTANCE_NAME}
-  cf create-service-key storage-${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME}
+  cf create-service cloud-object-storage Lite storage-${CF_APP}
+  cf create-service-key storage-${CF_APP} ${VCAP_KEY_NAME}
 
   bx iam oauth-tokens > tokens.txt
 
