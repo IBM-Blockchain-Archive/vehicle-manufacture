@@ -11,7 +11,7 @@ detect_exit() {
     if [ "$DEPLOY_STATUS" != "sample_up" ]; then
       printf "\n\n --- Uh oh something failed... ---\n"
       export DEPLOY_STATUS="tc_error"
-      if [ "$API_HOST" != "" ]; then
+      if [ "$API_URL" != "" ]; then
         update_status
       fi
     else
@@ -21,13 +21,13 @@ detect_exit() {
 
 update_status() {
     echo "Updating Deployment Status"
-    echo "$API_HOST/api/v1/networks/$NETWORK_ID/sample/marbles"   #dsh remove this
+    echo "$API_URL/api/v1/networks/$NETWORKID/sample/marbles"   #dsh remove this
     echo '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": "'"$DEPLOY_STATUS"'"}'
     curl -X PUT -s -S\
-      "$API_HOST/api/v1/networks/$NETWORK_ID/sample/marbles" \
+      "$API_URL/api/v1/networks/$NETWORKID/sample/marbles" \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
-      -u $API_KEY:$API_SECRET \
+      -u $USERID:$PASSWORD \
       -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": "'"$DEPLOY_STATUS"'"}' \
       | jq '.' || true
 }
