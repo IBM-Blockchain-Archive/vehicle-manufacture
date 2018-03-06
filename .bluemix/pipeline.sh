@@ -1,8 +1,36 @@
 #!/bin/bash
+trap 'detect_exit' 0 1 2 3 6
+
 echo hello world
 export IBP_NAME="ibm-blockchain-5-dev"
 export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
 export VCAP_KEY_NAME="Credentials-1"
+export APP_URL="unknown_yet"  # we correct this later
+
+detect_exit() {
+    if [ "$DEPLOY_STATUS" != "sample_up" ]; then
+      printf "\n\n --- Uh oh something failed... ---\n"
+      export DEPLOY_STATUS="tc_error"
+      if [ "$API_HOST" != "" ]; then
+        update_status
+      fi
+    else
+      echo "Script completed successfully. =)"
+    fi
+}
+
+update_status() {
+    echo "Updating Deployment Status"
+    echo "$API_HOST/api/v1/networks/$NETWORK_ID/sample/marbles"   #dsh remove this
+    echo '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": "'"$DEPLOY_STATUS"'"}'
+    curl -X PUT -s -S\
+      "$API_HOST/api/v1/networks/$NETWORK_ID/sample/marbles" \
+      -H 'Cache-Control: no-cache' \
+      -H 'Content-Type: application/json' \
+      -u $API_KEY:$API_SECRET \
+      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": "'"$DEPLOY_STATUS"'"}' \
+      | jq '.' || true
+}
 
 printf "\n ---- Install node and nvm ----- \n"
 npm config delete prefix
@@ -25,15 +53,6 @@ nvm use node
     export SERVICE_INSTANCE_NAME="Blockchain-${CF_APP}"
   fi
     printf "Using service instance name '${SERVICE_INSTANCE_NAME}'\n"
-
-# -----------------------------------------------------------
-# Detect if we we have a callback url to hit when demo is alive - [ Optional ]
-# -----------------------------------------------------------
-  if [ "$ALIVE_SIGNAL" != "" ]; then
-    echo "The alive signal url was provided, ${ALIVE_SIGNAL}"
-    #export ALIVE_SIGNAL=`echo $ALIVE_SIGNAL | sed -r 's/%3A/:/g'
-    curl -s --head $ALIVE_SIGNAL | head -n 1 | grep "HTTP/1.[01] [23].."
-  fi
 
 # -----------------------------------------------------------
 # 1. Test if everything we need is set
@@ -117,6 +136,9 @@ nvm use node
 
   export CHANNEL="defaultchannel"
 
+  export DEPLOY_STATUS="received_creds"
+  update_status
+
 
 
 # -----------------------------------------------------------
@@ -189,6 +211,9 @@ EOF
   printf "\n --- install network --- \n"
   composer runtime install -c adminCard -n vehicle-manufacture-network
 
+  export DEPLOY_STATUS="installed_cc"
+  update_status
+
   printf "\n --- start network --- \n"
   composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
 
@@ -197,6 +222,9 @@ EOF
   composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
 
   composer card import -f ./admin@vehicle-manufacture-network.card
+
+  export DEPLOY_STATUS="instantiated_cc"
+  update_status
 
 ## -----------------------------------------------------------
 ## 8. Install Composer Playground
@@ -237,13 +265,12 @@ EOF
 #  # Start her up
 #  printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
 #  cf start ${CF_APP}
+#  export APP_URL=$(cf app $CF_APP | grep -Po "(?<=routes:)\s*\S*")
 #
 ## -----------------------------------------------------------
 ## 11. Ping IBP that the application is alive  - [ Optional ]
 ## -----------------------------------------------------------
-#  if [ "$ALIVE_SIGNAL" != "" ]; then
-#    printf "\n --- Sending signal that the demo is alive ---\n"
-#    curl -s --head $ALIVE_SIGNAL | head -n 1 | grep "HTTP/1.[01] [23].."
-#  fi
+#  export DEPLOY_STATUS="sample_up"
+#  update_status
 #
 #  printf "\n\n --- We are done here. ---\n\n"

@@ -11,9 +11,6 @@ stages:
   - name: SERVICE_INSTANCE_NAME
     value: '{{sin}}'
     type: text
-  - name: ALIVE_SIGNAL
-    value: '{{alive_signal}}'
-    type: text
   - name: SAMPLE_REPO
     value: '{{SAMPLE_REPO}}'
     type: text
