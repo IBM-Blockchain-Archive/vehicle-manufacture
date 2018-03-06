@@ -6,6 +6,8 @@ export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
 
+env
+
 detect_exit() {
     if [ "$DEPLOY_STATUS" != "sample_up" ]; then
       printf "\n\n --- Uh oh something failed... ---\n"
