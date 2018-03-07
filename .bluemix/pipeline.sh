@@ -5,6 +5,7 @@ export IBP_NAME="ibm-blockchain-5-dev"
 export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
+export SERVICE_INSTANCE="Blockchain-vehiclemanufacture-20180307105541823"
 
 detect_exit() {
     if [ "$DEPLOY_STATUS" != "sample_up" ]; then
@@ -259,7 +260,8 @@ EOF
 #  cd node_modules/composer-playground
 #
 #  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-#  cf set-env composer-playground-${CF_APP} COMPOSER_CONFIG '{"webonly":true}'
+#  cf set-env composer-playground-${CF_APP} NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses ,"options":{}}}}
+
 #  cf start composer-playground-${CF_APP}
 
 ## -----------------------------------------------------------
