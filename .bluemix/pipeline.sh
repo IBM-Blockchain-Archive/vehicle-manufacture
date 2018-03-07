@@ -41,6 +41,8 @@ nvm use node
 
     node -v
 
+    pip install awscli
+
 # -----------------------------------------------------------
 # Detect if there is already a service we should use - [ Optional ]
 # -----------------------------------------------------------
