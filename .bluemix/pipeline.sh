@@ -128,6 +128,8 @@ nvm use node
 
   cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds
 
+  cat ./config/cloudant-creds
+
   export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds)
 
   printf "\n ${CLOUDANT_CREDS} \n"
