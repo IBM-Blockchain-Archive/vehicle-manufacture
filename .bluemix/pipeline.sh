@@ -98,149 +98,149 @@ nvm use node
   cf create-service ${IBP_NAME} ${IBP_PLAN} ${SERVICE_INSTANCE_NAME}
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
-  printf "\n --- Creating an instance of the Cloud object store ---\n"
-  bx api ${CF_TARGET_URL}
+#  printf "\n --- Creating an instance of the Cloud object store ---\n"
+#  bx api ${CF_TARGET_URL}
+#
+#  cf create-service cloud-object-storage Lite storage-${CF_APP}
+#  cf create-service-key storage-${CF_APP} ${VCAP_KEY_NAME}
+#
+#  bx iam oauth-tokens > tokens.txt
+#
+#  cat tokens.txt
+#
+#  curl -X "PUT" "https://s3.us-south.objectstorage.softlayer.net/bucket-${SERVICE_INSTANCE_NAME}" \
+#       -H "Authorization: Bearer <token>" \
+#       -H "ibm-service-instance-id: storage-${SERVICE_INSTANCE_NAME}"
 
-  cf create-service cloud-object-storage Lite storage-${CF_APP}
-  cf create-service-key storage-${CF_APP} ${VCAP_KEY_NAME}
 
-  bx iam oauth-tokens > tokens.txt
+# -----------------------------------------------------------
+# 3. Get service credentials into our file system (remove the first two lines from cf service-key output)
+# -----------------------------------------------------------
+  printf "\n --- Getting service credentials ---\n"
+  cf service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} > ./config/temp.txt
+  tail -n +2 ./config/temp.txt > ./config/vehicle_tc.json
 
-  cat tokens.txt
+  curl -o jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+  chmod +x jq
+  export PATH=$PATH:$PWD
 
-  curl -X "PUT" "https://s3.us-south.objectstorage.softlayer.net/bucket-${SERVICE_INSTANCE_NAME}" \
-       -H "Authorization: Bearer <token>" \
-       -H "ibm-service-instance-id: storage-${SERVICE_INSTANCE_NAME}"
+  jq --raw-output '.credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
+
+  printf "\n --- connection-profile.json --- \n"
+  cat ./config/connection-profile.json
+
+  export SECRET=$(jq --raw-output 'limit(1;.certificateAuthorities[].registrar[0].enrollSecret)' ./config/connection-profile.json)
+  printf "\n secret ${SECRET} \n"
+
+  export NETWORKID=$(jq --raw-output '."x-networkId"' ./config/connection-profile.json)
+  printf "\n networkid ${NETWORKID} \n"
+
+  export USERID=$(jq --raw-output '."x-api".key' ./config/connection-profile.json)
+  printf "\n userid ${USERID} \n"
+
+  export PASSWORD=$(jq --raw-output '."x-api".secret' ./config/connection-profile.json)
+  printf "\n password ${PASSWORD} \n"
+
+  export API_URL=$(jq --raw-output '."x-api".url' ./config/connection-profile.json)
+  printf "\n apiurl ${API_URL} \n"
+
+  export MSPID=$(jq --raw-output 'limit(1; .organizations[].mspid)' ./config/connection-profile.json)
+  printf "\n mspid ${MSPID} \n"
+
+  export PEER=$(jq --raw-output 'limit(1; .organizations[].peers[0])' ./config/connection-profile.json)
+  printf "\n peer ${PEER} \n"
+
+  export CHANNEL="defaultchannel"
+
+  export DEPLOY_STATUS="received_creds"
+  update_status
 
 
-## -----------------------------------------------------------
-## 3. Get service credentials into our file system (remove the first two lines from cf service-key output)
-## -----------------------------------------------------------
-#  printf "\n --- Getting service credentials ---\n"
-#  cf service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} > ./config/temp.txt
-#  tail -n +2 ./config/temp.txt > ./config/vehicle_tc.json
+
+# -----------------------------------------------------------
+# 4. Install composer-cli
+# -----------------------------------------------------------
+  printf "\n ---- Install composer-cli ----- \n "
+
+  npm install -g composer-cli@next
+
+  composer -v
+
+  printf "\n ----- create ca card ----- \n"
+  composer card create -f ca.card -p ./config/connection-profile.json -u admin -s ${SECRET}
+  composer card import -f ca.card -n ca
+
+# -----------------------------------------------------------
+# 5. Add and sync admin cert
+# -----------------------------------------------------------
+  # request identity
+  composer identity request --card ca --path ./credentials
+  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
+
+  # add admin cert
+  printf "\n ----- add certificate ----- \n"
+  cat << EOF > request.json
+{
+"msp_id": "${MSPID}",
+"peers": ["${PEER}"],
+"adminCertName": "my cert",
+"adminCertificate": "${PUBLIC_CERT}"
+}
+EOF
+
+  cat request.json
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
+
+#  # sync certificates
+#  printf "\n ----- sync certificate ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
 #
-#  curl -o jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
-#  chmod +x jq
-#  export PATH=$PATH:$PWD
+#  # stop peer
+#  printf "\n ----- stop peer ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
 #
-#  jq --raw-output '.credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
-#
-#  printf "\n --- connection-profile.json --- \n"
-#  cat ./config/connection-profile.json
-#
-#  export SECRET=$(jq --raw-output 'limit(1;.certificateAuthorities[].registrar[0].enrollSecret)' ./config/connection-profile.json)
-#  printf "\n secret ${SECRET} \n"
-#
-#  export NETWORKID=$(jq --raw-output '."x-networkId"' ./config/connection-profile.json)
-#  printf "\n networkid ${NETWORKID} \n"
-#
-#  export USERID=$(jq --raw-output '."x-api".key' ./config/connection-profile.json)
-#  printf "\n userid ${USERID} \n"
-#
-#  export PASSWORD=$(jq --raw-output '."x-api".secret' ./config/connection-profile.json)
-#  printf "\n password ${PASSWORD} \n"
-#
-#  export API_URL=$(jq --raw-output '."x-api".url' ./config/connection-profile.json)
-#  printf "\n apiurl ${API_URL} \n"
-#
-#  export MSPID=$(jq --raw-output 'limit(1; .organizations[].mspid)' ./config/connection-profile.json)
-#  printf "\n mspid ${MSPID} \n"
-#
-#  export PEER=$(jq --raw-output 'limit(1; .organizations[].peers[0])' ./config/connection-profile.json)
-#  printf "\n peer ${PEER} \n"
-#
-#  export CHANNEL="defaultchannel"
-#
-#  export DEPLOY_STATUS="received_creds"
-#  update_status
-#
-#
-#
-## -----------------------------------------------------------
-## 4. Install composer-cli
-## -----------------------------------------------------------
-#  printf "\n ---- Install composer-cli ----- \n "
-#
-#  npm install -g composer-cli@next
-#
-#  composer -v
-#
-#  printf "\n ----- create ca card ----- \n"
-#  composer card create -f ca.card -p ./config/connection-profile.json -u admin -s ${SECRET}
-#  composer card import -f ca.card -n ca
-#
-## -----------------------------------------------------------
-## 5. Add and sync admin cert
-## -----------------------------------------------------------
-#  # request identity
-#  composer identity request --card ca --path ./credentials
-#  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
-#
-#  # add admin cert
-#  printf "\n ----- add certificate ----- \n"
-#  cat << EOF > request.json
-#{
-#"msp_id": "${MSPID}",
-#"peers": ["${PEER}"],
-#"adminCertName": "my cert",
-#"adminCertificate": "${PUBLIC_CERT}"
-#}
-#EOF
-#
-#  cat request.json
-##  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
-##       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
-#
-##  # sync certificates
-##  printf "\n ----- sync certificate ----- \n"
-##  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
-##       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
-##
-##  # stop peer
-##  printf "\n ----- stop peer ----- \n"
-##  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-##       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-##
-##  # start peer
-##  printf "\n ----- start peer ----- \n"
-##  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
-##       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
-#
-## -----------------------------------------------------------
-## 6. Create new card
-## -----------------------------------------------------------
-#  printf "\n ---- Create admin card ----- \n "
-#  composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
-#
-#  composer card import -f adminCard.card -n adminCard
-#
-## -----------------------------------------------------------
-## 7. Deploy the network
-## -----------------------------------------------------------
-#  printf "\n --- get network --- \n"
-#  npm install vehicle-manufacture-network
-#
-#  printf "\n --- create archive --- \n"
-#  composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
-#
-#  printf "\n --- install network --- \n"
-#  composer runtime install -c adminCard -n vehicle-manufacture-network
-#
-#  export DEPLOY_STATUS="installed_cc"
-#  update_status
-#
-#  printf "\n --- start network --- \n"
-#  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
-#
-#  composer card delete -n admin@vehicle-manufacture-network
-#
-#  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
-#
-#  composer card import -f ./admin@vehicle-manufacture-network.card
-#
-#  export DEPLOY_STATUS="instantiated_cc"
-#  update_status
+#  # start peer
+#  printf "\n ----- start peer ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+
+# -----------------------------------------------------------
+# 6. Create new card
+# -----------------------------------------------------------
+  printf "\n ---- Create admin card ----- \n "
+  composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
+
+  composer card import -f adminCard.card -n adminCard
+
+# -----------------------------------------------------------
+# 7. Deploy the network
+# -----------------------------------------------------------
+  printf "\n --- get network --- \n"
+  npm install vehicle-manufacture-network
+
+  printf "\n --- create archive --- \n"
+  composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
+
+  printf "\n --- install network --- \n"
+  composer runtime install -c adminCard -n vehicle-manufacture-network
+
+  export DEPLOY_STATUS="installed_cc"
+  update_status
+
+  printf "\n --- start network --- \n"
+  composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
+
+  composer card delete -n admin@vehicle-manufacture-network
+
+  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
+
+  composer card import -f ./admin@vehicle-manufacture-network.card
+
+  export DEPLOY_STATUS="instantiated_cc"
+  update_status
 
 ## -----------------------------------------------------------
 ## 8. Install Composer Playground
