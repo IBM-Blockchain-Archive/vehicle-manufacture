@@ -127,7 +127,7 @@ nvm use node
   export PATH=$PATH:$PWD
 
   cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
-  tail -n +1 ./config/cloudant-creds-temp.txt > ./config/cloudant-creds.txt
+  tail -n +2 ./config/cloudant-creds-temp.txt > ./config/cloudant-creds.txt
 
   cat ./config/cloudant-creds.txt
 
