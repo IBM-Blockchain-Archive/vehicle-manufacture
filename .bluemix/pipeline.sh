@@ -268,8 +268,6 @@ EOF
   printf "\n --- start network --- \n"
   composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
 
-  composer card delete -n admin@vehicle-manufacture-network
-
   composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
 
   composer card import -f ./admin@vehicle-manufacture-network.card
@@ -280,15 +278,16 @@ EOF
 ## -----------------------------------------------------------
 ## 8. Install Composer Playground
 ## -----------------------------------------------------------
-#  printf "\n ---- Install composer-playground ----- \n"
-#  npm install composer-playground@next
-#
-#  cd node_modules/composer-playground
-#
-#  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-#  cf set-env composer-playground-${CF_APP} NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses ,"options":{}}}}
+  printf "\n ---- Install composer-playground ----- \n"
+  npm install composer-playground@next
 
-#  cf start composer-playground-${CF_APP}
+  cd node_modules/composer-playground
+  npm install git+https://github.com/ampretia/composer-wallet-cloudant.git
+
+  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
+  cf set-env composer-playground-${CF_APP} NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet" ,"options": "${CLOUDANT_CREDS}"}}}
+
+  cf start composer-playground-${CF_APP}
 
 ## -----------------------------------------------------------
 ## 9. Install Composer Rest Server
