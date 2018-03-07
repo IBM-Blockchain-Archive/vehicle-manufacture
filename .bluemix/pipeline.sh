@@ -119,16 +119,18 @@ nvm use node
 # 3. Get service credentials into our file system (remove the first two lines from cf service-key output)
 # -----------------------------------------------------------
   printf "\n --- Getting service credentials ---\n"
-  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds
-
-  export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds)
-
   cf service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} > ./config/temp.txt
   tail -n +2 ./config/temp.txt > ./config/vehicle_tc.json
 
   curl -o jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
   chmod +x jq
   export PATH=$PATH:$PWD
+
+  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds
+
+  export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds)
+
+  printf "\n ${CLOUDANT_CREDS} \n"
 
   printf "\n ---- CAZ BANANA ---- \n"
   cat ./config/vehicle_tc.json
