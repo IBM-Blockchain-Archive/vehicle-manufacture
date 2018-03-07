@@ -218,7 +218,7 @@ EOF
   PEER_STATUS="not running"
   i=0
 
-  while [ $i -lt 6 ]
+  while [ $i -lt 12 ]
     do
     echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
          curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
