@@ -100,7 +100,7 @@ nvm use node
 
 #  printf "\n --- Creating an instance of the Cloud object store ---\n"
   cf create-service cloudantNoSQLDB Lite cloudant-${CF_APP}
-  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME}
+  cf create-service-key cloudant-${CF_APP} ${VCAP_KEY_NAME}
 #  bx api ${CF_TARGET_URL}
 #
 #  cf create-service cloud-object-storage Lite storage-${CF_APP}
@@ -119,6 +119,10 @@ nvm use node
 # 3. Get service credentials into our file system (remove the first two lines from cf service-key output)
 # -----------------------------------------------------------
   printf "\n --- Getting service credentials ---\n"
+  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds
+
+  export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds)
+
   cf service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} > ./config/temp.txt
   tail -n +2 ./config/temp.txt > ./config/vehicle_tc.json
 
@@ -127,7 +131,7 @@ nvm use node
   export PATH=$PATH:$PWD
 
   printf "\n ---- CAZ BANANA ---- \n"
-  ./config/vehicle_tc.json
+  cat ./config/vehicle_tc.json
 
   jq --raw-output '.credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
 
