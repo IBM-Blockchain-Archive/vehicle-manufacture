@@ -131,7 +131,7 @@ nvm use node
 
   cat ./config/cloudant-creds.txt
 
-  export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds)
+  export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds.txt)
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
