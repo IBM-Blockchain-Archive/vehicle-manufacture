@@ -281,6 +281,12 @@ EOF
   printf "\n ---- Install composer-playground ----- \n"
   npm install composer-playground@next
 
+  npm -g install git+https://github.com/ampretia/composer-wallet-cloudant.git
+
+  NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-ibmcos","desc":"Uses cloud wallet" ,"options":"${CLOUDANT_CREDS}"}}}
+
+  composer card import -f ./admin@vehicle-manufacture-network.card
+
   cd node_modules/composer-playground
   npm install git+https://github.com/ampretia/composer-wallet-cloudant.git
 
