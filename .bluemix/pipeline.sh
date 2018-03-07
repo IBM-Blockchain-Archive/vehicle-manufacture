@@ -131,13 +131,13 @@ node -v
 
   export CLOUDANT_CREDS=$(jq '.' ./config/cloudant-creds.txt)
 
-  export CLOUDANT_ACCOUNT=$(jq '.username' CLOUDANT_CREDS)
-  export CLOUDANT_PASSWORD=$(jq '.password' CLOUDANT_CREDS)
+  export CLOUDANT_ACCOUNT=$(jq '.username' ${CLOUDANT_CREDS})
+  export CLOUDANT_PASSWORD=$(jq '.password' ${CLOUDANT_CREDS})
 
   echo curl -X PUT https://${CLOUDANT_ACCOUNT}:${CLOUDANT_PASSWORD}@${CLOUDANT_ACCOUNT}.cloudant.com/${CF_APP}
        curl -X PUT https://${CLOUDANT_ACCOUNT}.cloudant.com/${CF_APP}
 
-  export CLOUDANT_CREDS=$(jq ".database = ${CF_APP} | .")
+  export CLOUDANT_CREDS=$(jq ". + {database: ${CF_APP}")
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
@@ -302,7 +302,7 @@ EOF
   npm install git+https://github.com/ampretia/composer-wallet-cloudant.git
 
   cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-  cf set-env composer-playground-${CF_APP} NODE_CONFIG="${NODE_CONFIG}"
+  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-playground-${CF_APP}
 
 ## -----------------------------------------------------------
