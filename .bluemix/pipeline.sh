@@ -99,6 +99,8 @@ nvm use node
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
 #  printf "\n --- Creating an instance of the Cloud object store ---\n"
+  cf create-service cloudantNoSQLDB Lite cloudant-${CF_APP}
+  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME}
 #  bx api ${CF_TARGET_URL}
 #
 #  cf create-service cloud-object-storage Lite storage-${CF_APP}
@@ -123,6 +125,9 @@ nvm use node
   curl -o jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
   chmod +x jq
   export PATH=$PATH:$PWD
+
+  printf "\n ---- CAZ BANANA ---- \n"
+  ./config/vehicle_tc.json
 
   jq --raw-output '.credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
 
