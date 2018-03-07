@@ -129,15 +129,13 @@ node -v
 
   cat ./config/cloudant-creds.txt
 
-  export CLOUDANT_CREDS=$(jq '.' ./config/cloudant-creds.txt)
-
-  export CLOUDANT_ACCOUNT=$(jq '.username' ${CLOUDANT_CREDS})
-  export CLOUDANT_PASSWORD=$(jq '.password' ${CLOUDANT_CREDS})
+  export CLOUDANT_ACCOUNT=$(jq '.username' ./config/cloudant-creds.txt)
+  export CLOUDANT_PASSWORD=$(jq '.password' ./config/cloudant-creds.txt)
 
   echo curl -X PUT https://${CLOUDANT_ACCOUNT}:${CLOUDANT_PASSWORD}@${CLOUDANT_ACCOUNT}.cloudant.com/${CF_APP}
        curl -X PUT https://${CLOUDANT_ACCOUNT}.cloudant.com/${CF_APP}
 
-  export CLOUDANT_CREDS=$(jq ". + {database: ${CF_APP}")
+  export CLOUDANT_CREDS=$(jq ". + {database: ${CF_APP}" ./config/cloudant-creds.txt)
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
