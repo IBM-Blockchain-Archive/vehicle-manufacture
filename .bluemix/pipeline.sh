@@ -133,7 +133,7 @@ nvm use node
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
-  jq --raw-output '.credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
+  jq --raw-output 'del(.credentials[0].peers."org2-peer1")  | .credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
 
   printf "\n --- connection-profile.json --- \n"
   cat ./config/connection-profile.json
@@ -219,7 +219,9 @@ EOF
 
   #wait for peer to start
   printf "\n ----- wait for peer to start --- \n"
-  i="0"
+
+  PEER_STATUS="not running"
+  i=0
 
   while [ $i -lt 4 ]
     do
@@ -227,7 +229,16 @@ EOF
          curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
     sleep 10s
     i=$[$i+1]
-    done
+  done
+
+#  while ["$PEER_STATUS" !="running" && "$i" -lt "4" ]
+#    do
+#    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
+#         STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
+#         PEER_STATUS=$(jq --raw-output ".${PEER}.status" ${STATUS})
+#    sleep 10s
+#    i=$[$i+1]
+#    done
 
 
 # -----------------------------------------------------------
