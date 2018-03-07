@@ -129,7 +129,7 @@ node -v
 
   cat ./config/cloudant-creds.txt
 
-  export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds.txt)
+  export CLOUDANT_CREDS=$(jq '.' ./config/cloudant-creds.txt)
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
@@ -283,7 +283,10 @@ EOF
 
   npm -g install git+https://github.com/ampretia/composer-wallet-cloudant.git
 
-  export NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-ibmcos","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
+  read -d '' NODE_CONFIG << EOF
+{"composer":{"wallet":{"type":"@ampretia/composer-wallet-ibmcos","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
+EOF
+  export NODE_CONFIG
 
   composer card import -f ./admin@vehicle-manufacture-network.card
 
