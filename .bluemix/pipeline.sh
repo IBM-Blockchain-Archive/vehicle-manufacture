@@ -126,9 +126,10 @@ nvm use node
   chmod +x jq
   export PATH=$PATH:$PWD
 
-  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds
+  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
+  tail -n +1 ./config/cloudant-creds-temp.txt > ./config/cloudant-creds.txt
 
-  cat ./config/cloudant-creds
+  cat ./config/cloudant-creds.txt
 
   export CLOUDANT_CREDS=$(jq --raw-output '.' ./config/cloudant-creds)
 
