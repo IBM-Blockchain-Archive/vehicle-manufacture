@@ -285,7 +285,7 @@ EOF
   npm install git+https://github.com/ampretia/composer-wallet-cloudant.git
 
   cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-  cf set-env composer-playground-${CF_APP} NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet" ,"options": "${CLOUDANT_CREDS}"}}}
+  cf set-env composer-playground-${CF_APP} NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-ibmcos","desc":"Uses cloud wallet" ,"options":"${CLOUDANT_CREDS}"}}}
 
   cf start composer-playground-${CF_APP}
 
