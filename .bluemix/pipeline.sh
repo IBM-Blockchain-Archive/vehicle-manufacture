@@ -283,7 +283,7 @@ EOF
 
   npm -g install git+https://github.com/ampretia/composer-wallet-cloudant.git
 
-  NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-ibmcos","desc":"Uses cloud wallet" ,"options":"${CLOUDANT_CREDS}"}}}
+  export NODE_CONFIG={"composer":{"wallet":{"type":"@ampretia/composer-wallet-ibmcos","desc":"Uses cloud wallet" ,"options":"${CLOUDANT_CREDS}"}}}
 
   composer card import -f ./admin@vehicle-manufacture-network.card
 
