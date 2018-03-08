@@ -285,7 +285,7 @@ EOF
 # 8. Install Composer Playground
 # -----------------------------------------------------------
   printf "\n ---- Install composer-playground ----- \n"
-  npm install composer-playground@next
+ # npm install composer-playground@next
 
   npm install -g @ampretia/composer-wallet-cloudant
 
@@ -296,13 +296,13 @@ EOF
 
   composer card import -f ./admin@vehicle-manufacture-network.card
 
-  cd node_modules/composer-playground
-  npm install @ampretia/composer-wallet-cloudant
-
-  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-  cf start composer-playground-${CF_APP}
-  cd ../..
+#  cd node_modules/composer-playground
+#  npm install @ampretia/composer-wallet-cloudant
+#
+#  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
+#  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+#  cf start composer-playground-${CF_APP}
+#  cd ../..
 
 # -----------------------------------------------------------
 # 9. Install Composer Rest Server
