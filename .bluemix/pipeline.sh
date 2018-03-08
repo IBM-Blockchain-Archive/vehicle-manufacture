@@ -222,23 +222,23 @@ EOF
 
   PEER_STATUS="not running"
   i=0
-
-  while [ $i -lt 12 ]
-    do
-    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-         curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-    sleep 10s
-    i=$[$i+1]
-  done
-
-#  while ["$PEER_STATUS" !="running" && "$i" -lt "4" ]
+#
+#  while [ $i -lt 12 ]
 #    do
 #    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-#         STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
-#         PEER_STATUS=$(jq --raw-output ".${PEER}.status" ${STATUS})
+#         curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
 #    sleep 10s
 #    i=$[$i+1]
-#    done
+#  done
+
+  while ["$PEER_STATUS" !="running" && "$i" -lt "12" ]
+    do
+    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
+         STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
+         PEER_STATUS=$(jq --raw-output ".${PEER}.status" ${STATUS})
+    sleep 10s
+    i=$[$i+1]
+    done
 
 # sync certificates
   printf "\n ----- sync certificate ----- \n"

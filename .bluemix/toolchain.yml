@@ -7,7 +7,7 @@ template:
   description:
     $ref: "#/messages/template.description"
   header: '![](toolchain.png)'
-  icon: "../public/imgs/favicon-36.png"
+  icon: "../public/imgs/VehicleManufactureToolchain.png"
   required:
     - vehicle-build
     - vehicle-repo
@@ -54,7 +54,7 @@ services:
     parameters:
       type: 'Vehicle'
       lifecyclePhase: 'RUN'
-      imageUrl: 'https://github.com/caroline-church/VehicleManufacture/raw/master/public/imgs/favicon-36.png'
+      imageUrl: 'https://github.com/caroline-church/VehicleManufacture/raw/master/public/imgs/VehicleManufactureToolchain.png'
       documentationUrl: 'https://github.com/caroline-church/VehicleManufacture'
       name: 'Node.js Application'
       dashboard_url: 'https://{{form.pipeline.parameters.prod-app-name}}.stage1.mybluemix.net/login'
