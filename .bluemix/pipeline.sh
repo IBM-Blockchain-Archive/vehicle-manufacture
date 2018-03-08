@@ -237,7 +237,7 @@ EOF
     sleep 10s
     echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
          STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
-         ${PEER_STATUS}=echo ${STATUS} | $(jq --raw-output ".\"${PEER}\".status")
+         ${PEER_STATUS}=echo ${STATUS} | jq --raw-output ".[\"${PEER}\"]"
     i=$[$i+1]
     done
 
@@ -296,7 +296,9 @@ EOF
 
   composer card import -f ./admin@vehicle-manufacture-network.card
 
-  composer network ping -c admin@vehicle-manufacture-network
+  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
+
+  #composer network ping -c admin@vehicle-manufacture-network
 
 #  cd node_modules/composer-playground
 #  npm install @ampretia/composer-wallet-cloudant
