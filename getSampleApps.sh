@@ -1,6 +1,4 @@
-rm -rf composer-sample-applications
-git clone https://github.com/hyperledger/composer-sample-applications
-cd composer-sample-applications
-npm install
-cd packages/vehicle-manufacture-car-builder
+#!/usr/bin/env bash
+cd node_modules/vehicle-manufacture-car-builder
 npm run build
+cd ../..
