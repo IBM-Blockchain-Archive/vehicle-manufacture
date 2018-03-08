@@ -5,7 +5,7 @@ export IBP_NAME="ibm-blockchain-5-staging"
 export IBP_PLAN="ibm-blockchain-plan-v1-starter-staging"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
-#export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180307105541823"
+export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180308080941423"
 
 detect_exit() {
     if [ "$DEPLOY_STATUS" != "sample_up" ]; then
@@ -129,13 +129,12 @@ node -v
 
   cat ./config/cloudant-creds.txt
 
-  export CLOUDANT_ACCOUNT=$(jq --raw-output '.username' ./config/cloudant-creds.txt)
-  export CLOUDANT_PASSWORD=$(jq --raw-output '.password' ./config/cloudant-creds.txt)
+  export CLOUDANT_URL=$(jq --raw-output '.url' ./config/cloudant-creds.txt)
 
-  echo curl -X PUT https://${CLOUDANT_ACCOUNT}:${CLOUDANT_PASSWORD}@${CLOUDANT_ACCOUNT}.cloudant.com/${CF_APP}
-       curl -X PUT https://${CLOUDANT_ACCOUNT}.cloudant.com/${CF_APP}
+  echo curl -X PUT ${CLOUDANT_URL}/${CF_APP}
+       curl -X PUT ${CLOUDANT_URL}/${CF_APP}
 
-  export CLOUDANT_CREDS=$(jq ". + {database: \"${CF_APP}\"" ./config/cloudant-creds.txt)
+  export CLOUDANT_CREDS=$(jq ". + {database: \"${CF_APP}\"}" ./config/cloudant-creds.txt)
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
