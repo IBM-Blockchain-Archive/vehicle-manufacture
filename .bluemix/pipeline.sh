@@ -233,10 +233,10 @@ EOF
 
   while ["$PEER_STATUS" !="running" && "$i" -lt "12" ]
     do
+    sleep 10s
     echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
          STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
          PEER_STATUS=$(jq --raw-output ".${PEER}.status" ${STATUS})
-    sleep 10s
     i=$[$i+1]
     done
 
