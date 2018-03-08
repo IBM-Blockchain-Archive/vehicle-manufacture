@@ -6,7 +6,7 @@ export IBP_PLAN="ibm-blockchain-plan-v1-starter-staging"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
 export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180308080941423"
-export CLOUDANT_SERVICE_INSTANCE="cloudant-vehiclemanufacture-20180308094355941"
+export CLOUDANT_SERVICE_INSTANCE="vehiclemanufacture-20180308094355941"
 
 detect_exit() {
     if [ "$DEPLOY_STATUS" != "sample_up" ]; then
@@ -98,9 +98,9 @@ node -v
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
   printf "\n --- Creating an instance of the Cloud object store ---\n"
-  cf create-service cloudantNoSQLDB Lite ${CLOUDANT_SERVICE_INSTANCE}
+  cf create-service cloudantNoSQLDB Lite cloudant-${CLOUDANT_SERVICE_INSTANCE}
   #cf create-service cloudantNoSQLDB Lite cloudant-${CF_APP}
-  cf create-service-key ${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME}
+  cf create-service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME}
   #cf create-service-key cloudant-${CF_APP} ${VCAP_KEY_NAME}
 #  bx api ${CF_TARGET_URL}
 #
@@ -127,17 +127,21 @@ node -v
   chmod +x jq
   export PATH=$PATH:$PWD
 
-  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
+  cf service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
+  #cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
   tail -n +2 ./config/cloudant-creds-temp.txt > ./config/cloudant-creds.txt
 
   cat ./config/cloudant-creds.txt
 
   export CLOUDANT_URL=$(jq --raw-output '.url' ./config/cloudant-creds.txt)
 
-  echo curl -X PUT ${CLOUDANT_URL}/${CF_APP}
-       curl -X PUT ${CLOUDANT_URL}/${CF_APP}
+#  echo curl -X PUT ${CLOUDANT_URL}/${CF_APP}
+#       curl -X PUT ${CLOUDANT_URL}/${CF_APP}
+  echo curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
+       curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
 
-  export CLOUDANT_CREDS=$(jq ". + {database: \"${CF_APP}\"}" ./config/cloudant-creds.txt)
+  export CLOUDANT_CREDS=$(jq ". + {database: \"${CLOUDANT_SERVICE_INSTANCE}\"}" ./config/cloudant-creds.txt)
+  #export CLOUDANT_CREDS=$(jq ". + {database: \"${CF_APP}\"}" ./config/cloudant-creds.txt)
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
