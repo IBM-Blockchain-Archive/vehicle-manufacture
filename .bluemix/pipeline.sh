@@ -98,9 +98,9 @@ node -v
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
   printf "\n --- Creating an instance of the Cloud object store ---\n"
-  cf create-service cloudantNoSQLDB Lite cloudant-${CLOUDANT_SERVICE_INSTANCE}
+  cf create-service cloudantNoSQLDB Lite ${CLOUDANT_SERVICE_INSTANCE}
   #cf create-service cloudantNoSQLDB Lite cloudant-${CF_APP}
-  cf create-service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME}
+  cf create-service-key ${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME}
   #cf create-service-key cloudant-${CF_APP} ${VCAP_KEY_NAME}
 #  bx api ${CF_TARGET_URL}
 #
