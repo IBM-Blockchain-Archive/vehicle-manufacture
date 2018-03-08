@@ -280,9 +280,9 @@ EOF
   export DEPLOY_STATUS="instantiated_cc"
   update_status
 
-## -----------------------------------------------------------
-## 8. Install Composer Playground
-## -----------------------------------------------------------
+# -----------------------------------------------------------
+# 8. Install Composer Playground
+# -----------------------------------------------------------
   printf "\n ---- Install composer-playground ----- \n"
   npm install composer-playground@next
 
@@ -302,39 +302,40 @@ EOF
   cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-playground-${CF_APP}
 
-## -----------------------------------------------------------
-## 9. Install Composer Rest Server
-## -----------------------------------------------------------
-#  printf "\n----- Install REST server ----- \n"
-#  cd ../..
-#  npm install composer-rest-server@next
-#  cd node_modules/composer-rest-server
-#  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
-#  cf start composer-rest-server-${CF_APP}
-#  cd ../..
-#
-## -----------------------------------------------------------
-## 10. Start the app
-## -----------------------------------------------------------
-#
+# -----------------------------------------------------------
+# 9. Install Composer Rest Server
+# -----------------------------------------------------------
+  printf "\n----- Install REST server ----- \n"
+  cd ../..
+  npm install composer-rest-server@next
+  cd node_modules/composer-rest-server
+  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
+  cf start composer-rest-server-${CF_APP}
+  cd ../..
+
+# -----------------------------------------------------------
+# 10. Start the app
+# -----------------------------------------------------------
+
 #  # Push app (don't start yet, wait for binding)
-#  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
-#  cf push ${CF_APP} --no-start
-#  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
-#
-#  # Bind app to the blockchain service
-#  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
-#  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
-#
-#  # Start her up
-#  printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
-#  cf start ${CF_APP}
-#  export APP_URL=$(cf app $CF_APP | grep -Po "(?<=routes:)\s*\S*")
-#
-## -----------------------------------------------------------
-## 11. Ping IBP that the application is alive  - [ Optional ]
-## -----------------------------------------------------------
-#  export DEPLOY_STATUS="sample_up"
-#  update_status
-#
-#  printf "\n\n --- We are done here. ---\n\n"
+  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
+  cf push ${CF_APP} --no-start
+  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
+
+  # Bind app to the blockchain service
+  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
+  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
+
+  # Start her up
+  printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
+  cf start ${CF_APP}
+  export APP_URL=$(cf app $CF_APP | grep -Po "(?<=routes:)\s*\S*")
+
+# -----------------------------------------------------------
+# 11. Ping IBP that the application is alive  - [ Optional ]
+# -----------------------------------------------------------
+  export DEPLOY_STATUS="sample_up"
+  update_status
+
+  printf "\n\n --- We are done here. ---\n\n"

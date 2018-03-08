@@ -8,6 +8,6 @@ You can run the tutorial by using the command `npm start` in this folder.
 
 ***
 
-[![Deploy To Bluemix](/.bluemix/create_marbles_tc_new_button.png)](https://console.stage1.bluemix.net/devops/setup/deploy/?repository=https%3A//github.com/caroline-church/VehicleManufacture&branch=master)
+[![Deploy To Bluemix](/.bluemix/GetVehicleManufacture.png)](https://console.stage1.bluemix.net/devops/setup/deploy/?repository=https%3A//github.com/caroline-church/VehicleManufacture&branch=master)
 
 ***
