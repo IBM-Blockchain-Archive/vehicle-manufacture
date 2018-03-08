@@ -336,7 +336,7 @@ EOF
 
   export CF_APP="vehiclemanufacture-20180308151844225" #TODO delete this line
   printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
-  cf push ${CF_APP} --no-start
+  cf push ${CF_APP} --no-start -c "node server/app.js"
   cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
 
   # Bind app to the blockchain service
