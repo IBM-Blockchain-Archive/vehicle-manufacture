@@ -6,6 +6,7 @@ export IBP_PLAN="ibm-blockchain-plan-v1-starter-staging"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
 export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180308080941423"
+export CLOUDANT_SERVICE_INSTANCE="cloudant-vehiclemanufacture-20180308094355941"
 
 detect_exit() {
     if [ "$DEPLOY_STATUS" != "sample_up" ]; then
