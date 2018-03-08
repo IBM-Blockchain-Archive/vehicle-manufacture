@@ -317,29 +317,31 @@ EOF
 # -----------------------------------------------------------
 # 9. Install Composer Rest Server
 # -----------------------------------------------------------
-  printf "\n----- Install REST server ----- \n"
-  npm install composer-rest-server@next
-
-  cd node_modules/composer-rest-server
-
-  npm install @ampretia/composer-wallet-cloudant
-  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
-  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-  cf start composer-rest-server-${CF_APP}
-  cd ../..
+#  printf "\n----- Install REST server ----- \n"
+#  npm install composer-rest-server@next
+#
+#  cd node_modules/composer-rest-server
+#
+#  npm install @ampretia/composer-wallet-cloudant
+#  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
+#  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+#  cf start composer-rest-server-${CF_APP}
+#  cd ../..
 
 # -----------------------------------------------------------
 # 10. Start the app
 # -----------------------------------------------------------
 
 #  # Push app (don't start yet, wait for binding)
-#  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
-#  cf push ${CF_APP} --no-start
-#  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
-#
-#  # Bind app to the blockchain service
-#  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
-#  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
+
+  export CF_APP="vehiclemanufacture-20180308151844225" #TODO delete this line
+  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
+  cf push ${CF_APP} --no-start
+  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
+
+  # Bind app to the blockchain service
+  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
+  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
 
   # Start her up
   printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
