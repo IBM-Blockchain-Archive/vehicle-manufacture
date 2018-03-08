@@ -220,7 +220,7 @@ EOF
   #wait for peer to start
   printf "\n ----- wait for peer to start --- \n"
 
-  PEER_STATUS="not running"
+  export PEER_STATUS="not running"
   i=0
 #
 #  while [ $i -lt 12 ]
@@ -236,7 +236,7 @@ EOF
     sleep 10s
     echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
          STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
-         PEER_STATUS=$(jq --raw-output ".${PEER}.status" ${STATUS})
+         ${PEER_STATUS}=$(jq --raw-output ".${PEER}.status" ${STATUS})
     i=$[$i+1]
     done
 
@@ -312,8 +312,8 @@ EOF
   cd node_modules/composer-rest-server
 
   npm install @ampretia/composer-wallet-cloudant
-  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
+  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-rest-server-${CF_APP}
   cd ../..
 
@@ -322,18 +322,18 @@ EOF
 # -----------------------------------------------------------
 
 #  # Push app (don't start yet, wait for binding)
-  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
-  cf push ${CF_APP} --no-start
-  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
-
-  # Bind app to the blockchain service
-  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
-  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
+#  printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
+#  cf push ${CF_APP} --no-start
+#  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
+#
+#  # Bind app to the blockchain service
+#  printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
+#  cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
 
   # Start her up
   printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
   cf start ${CF_APP}
-  export APP_URL=$(cf app $CF_APP | grep -Po "(?<=routes:)\s*\S*")
+  export APP_URL=$(cf app ${CF_APP} | grep -Po "(?<=routes:)\s*\S*")
 
 # -----------------------------------------------------------
 # 11. Ping IBP that the application is alive  - [ Optional ]
