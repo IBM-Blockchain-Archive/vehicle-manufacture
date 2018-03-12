@@ -283,7 +283,7 @@ EOF
   update_status
 
   #Make sure peer is up
-  sleep 30s
+  sleep 60s
 
   printf "\n --- start network --- \n"
   composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
