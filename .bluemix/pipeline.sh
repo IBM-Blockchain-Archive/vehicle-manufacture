@@ -282,6 +282,9 @@ EOF
   export DEPLOY_STATUS="installed_cc"
   update_status
 
+  #Make sure peer is up
+  sleep 30s
+
   printf "\n --- start network --- \n"
   composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card
 
