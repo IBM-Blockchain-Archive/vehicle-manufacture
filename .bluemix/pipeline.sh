@@ -289,7 +289,7 @@ EOF
 
   while ! composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card; do
     echo sleeping to retry network start
-    sleep 10s
+    sleep 60s
   done
 
   composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
