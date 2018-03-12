@@ -149,7 +149,7 @@ node -v
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
-  jq --raw-output 'del(.credentials[0].peers."org2-peer1")  | .credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
+  jq --raw-output 'del(.credentials[0].peers."org2-peer1")  | .credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0].client.connection.timeout.peer.endorser = 600 | .credentials[0].client.connection.timeout.peer.eventHub = 600 | .credentials[0].client.connection.timeout.peer.eventReg = 600 | .credentials[0].client.connection.timeout.orderer = 600 | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
 
   printf "\n --- connection-profile.json --- \n"
   cat ./config/connection-profile.json
