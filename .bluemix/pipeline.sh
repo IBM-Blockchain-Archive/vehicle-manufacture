@@ -95,6 +95,10 @@ node -v
 # -----------------------------------------------------------
   printf "\n --- Creating an instance of the IBM Blockchain Platform service ---\n"
   cf create-service ${IBP_NAME} ${IBP_PLAN} ${SERVICE_INSTANCE_NAME}
+
+  #needed to ensure channels are created
+  sleep 30s
+
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
   printf "\n --- Creating an instance of the Cloud object store ---\n"
