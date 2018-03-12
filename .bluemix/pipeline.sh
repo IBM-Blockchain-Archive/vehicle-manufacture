@@ -5,8 +5,8 @@ export IBP_NAME="ibm-blockchain-5-staging"
 export IBP_PLAN="ibm-blockchain-plan-v1-starter-staging"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
-export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180308080941423"
-export CLOUDANT_SERVICE_INSTANCE="vehiclemanufacture-20180308094355941"
+#export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180308080941423"
+#export CLOUDANT_SERVICE_INSTANCE="vehiclemanufacture-20180308094355941"
 
 detect_exit() {
     if [ "$DEPLOY_STATUS" != "sample_up" ]; then
@@ -98,10 +98,10 @@ node -v
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
   printf "\n --- Creating an instance of the Cloud object store ---\n"
-  cf create-service cloudantNoSQLDB Lite cloudant-${CLOUDANT_SERVICE_INSTANCE}
-  #cf create-service cloudantNoSQLDB Lite cloudant-${CF_APP}
-  cf create-service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME}
-  #cf create-service-key cloudant-${CF_APP} ${VCAP_KEY_NAME}
+  #cf create-service cloudantNoSQLDB Lite cloudant-${CLOUDANT_SERVICE_INSTANCE}
+  cf create-service cloudantNoSQLDB Lite cloudant-${CF_APP}
+  #cf create-service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME}
+  cf create-service-key cloudant-${CF_APP} ${VCAP_KEY_NAME}
 #  bx api ${CF_TARGET_URL}
 #
 #  cf create-service cloud-object-storage Lite storage-${CF_APP}
@@ -127,21 +127,21 @@ node -v
   chmod +x jq
   export PATH=$PATH:$PWD
 
-  cf service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
-  #cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
+  #cf service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
+  cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
   tail -n +2 ./config/cloudant-creds-temp.txt > ./config/cloudant-creds.txt
 
   cat ./config/cloudant-creds.txt
 
   export CLOUDANT_URL=$(jq --raw-output '.url' ./config/cloudant-creds.txt)
 
-#  echo curl -X PUT ${CLOUDANT_URL}/${CF_APP}
-#       curl -X PUT ${CLOUDANT_URL}/${CF_APP}
-  echo curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
-       curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
+  echo curl -X PUT ${CLOUDANT_URL}/${CF_APP}
+       curl -X PUT ${CLOUDANT_URL}/${CF_APP}
+#  echo curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
+#       curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
 
-  export CLOUDANT_CREDS=$(jq ". + {database: \"${CLOUDANT_SERVICE_INSTANCE}\"}" ./config/cloudant-creds.txt)
-  #export CLOUDANT_CREDS=$(jq ". + {database: \"${CF_APP}\"}" ./config/cloudant-creds.txt)
+  #export CLOUDANT_CREDS=$(jq ". + {database: \"${CLOUDANT_SERVICE_INSTANCE}\"}" ./config/cloudant-creds.txt)
+  export CLOUDANT_CREDS=$(jq ". + {database: \"${CF_APP}\"}" ./config/cloudant-creds.txt)
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
@@ -243,7 +243,7 @@ EOF
     sleep 10s
     echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
          STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
-         ${PEER_STATUS}=echo ${STATUS} | jq --raw-output ".[\"${PEER}\"]"
+         PEER_STATUS=$(echo ${STATUS} | jq --raw-output ".[\"${PEER}\"]")
     i=$[$i+1]
     done
 
@@ -266,7 +266,8 @@ EOF
 # 7. Deploy the network
 # -----------------------------------------------------------
   printf "\n --- get network --- \n"
-  npm install vehicle-manufacture-network
+  #TODO make this not unstable
+  npm install vehicle-manufacture-network@unstable
 
   printf "\n --- create archive --- \n"
   composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
@@ -291,7 +292,7 @@ EOF
 # 8. Install Composer Playground
 # -----------------------------------------------------------
   printf "\n ---- Install composer-playground ----- \n"
- # npm install composer-playground@next
+  npm install composer-playground@next
 
   npm install -g @ampretia/composer-wallet-cloudant
 
@@ -304,29 +305,29 @@ EOF
 
   while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
 
-  #composer network ping -c admin@vehicle-manufacture-network
+  composer network ping -c admin@vehicle-manufacture-network
 
-#  cd node_modules/composer-playground
-#  npm install @ampretia/composer-wallet-cloudant
-#
-#  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-#  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-#  cf start composer-playground-${CF_APP}
-#  cd ../..
+  cd node_modules/composer-playground
+  npm install @ampretia/composer-wallet-cloudant
+
+  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
+  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+  cf start composer-playground-${CF_APP}
+  cd ../..
 
 # -----------------------------------------------------------
 # 9. Install Composer Rest Server
 # -----------------------------------------------------------
-#  printf "\n----- Install REST server ----- \n"
-#  npm install composer-rest-server@next
-#
-#  cd node_modules/composer-rest-server
-#
-#  npm install @ampretia/composer-wallet-cloudant
-#  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
-#  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-#  cf start composer-rest-server-${CF_APP}
-#  cd ../..
+  printf "\n----- Install REST server ----- \n"
+  npm install composer-rest-server@next
+
+  cd node_modules/composer-rest-server
+
+  npm install @ampretia/composer-wallet-cloudant
+  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
+  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+  cf start composer-rest-server-${CF_APP}
+  cd ../..
 
 # -----------------------------------------------------------
 # 10. Start the app
@@ -334,7 +335,7 @@ EOF
 
 #  # Push app (don't start yet, wait for binding)
 
-  export CF_APP="vehiclemanufacture-20180308151844225" #TODO delete this line
+  #export CF_APP="vehiclemanufacture-20180308151844225" #TODO delete this line
   printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
   cf push ${CF_APP} --no-start -c "node server/app.js"
   cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
