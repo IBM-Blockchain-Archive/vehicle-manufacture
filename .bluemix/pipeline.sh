@@ -1,8 +1,8 @@
 #!/bin/bash
 trap 'detect_exit' 0 1 2 3 6
 
-export IBP_NAME="ibm-blockchain-5-dev"
-export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
+export IBP_NAME="ibm-blockchain-5-staging"
+export IBP_PLAN="ibm-blockchain-plan-v1-starter-staging"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
 #export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180312111923714"
