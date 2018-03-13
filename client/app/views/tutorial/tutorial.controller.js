@@ -145,6 +145,7 @@ function awaitIFrameLoad($scope, $rootScope) {
 }
 
 function openWebSocket($scope, $rootScope) {
+  var wsUri = '';
   if (location.protocol === 'https:') {
     wsTxt = '[wss]';
     wsUri = 'wss://' + location.host;

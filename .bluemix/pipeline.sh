@@ -299,42 +299,30 @@ node -v
 # 8. Install Composer Playground
 # -----------------------------------------------------------
 #  printf "\n ---- Install composer-playground ----- \n"
-#  npm install composer-playground@next
-#
 #  npm install -g @ampretia/composer-wallet-cloudant
 
-#  read -d '' NODE_CONFIG << EOF
-#{"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
-#EOF
-#  export NODE_CONFIG
-#
+  read -d '' NODE_CONFIG << EOF
+{"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
+EOF
+  export NODE_CONFIG
+
 #  composer card import -f ./admin@vehicle-manufacture-network.card
 #
 #  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
 #
 #  composer network ping -c admin@vehicle-manufacture-network
-#
-#  cd node_modules/composer-playground
-#  npm install @ampretia/composer-wallet-cloudant
-#
-#  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-#  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-#  cf start composer-playground-${CF_APP}
-#  cd ../..
+
+  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.0 -i 1 -m 128M --no-start
+  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+  cf start composer-playground-${CF_APP}
 
 # -----------------------------------------------------------
 # 9. Install Composer Rest Server
 # -----------------------------------------------------------
-#  printf "\n----- Install REST server ----- \n"
-#  npm install composer-rest-server@next
-#
-#  cd node_modules/composer-rest-server
-#
-#  npm install @ampretia/composer-wallet-cloudant
-#  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
-#  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-#  cf start composer-rest-server-${CF_APP}
-#  cd ../..
+  printf "\n----- Install REST server ----- \n"
+  cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.0 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
+  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+  cf start composer-rest-server-${CF_APP}
 
   export REST_SERVER_URL=$(cf app composer-rest-server-${CF_APP} | grep routes: | awk '{print $2}')
 

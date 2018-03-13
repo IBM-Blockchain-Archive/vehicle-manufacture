@@ -18,9 +18,9 @@
     "express": "^4.15.2",
     "express-less": "^0.1.0",
     "request": "^2.81.0",
-    "vehicle-manufacture-car-builder": "latest",
-    "vehicle-manufacture-manufacturing": "latest",
-    "vehicle-manufacture-vda": "latest",
+    "vehicle-manufacture-car-builder": "unstable",
+    "vehicle-manufacture-manufacturing": "unstable",
+    "vehicle-manufacture-vda": "unstable",
     "ws": "^2.3.1"
   }
 }
