@@ -134,13 +134,13 @@ node -v
   export NETWORKID=$(jq --raw-output '.org1."network_id"' ./config/vehicle_tc.json)
   printf "\n networkid ${NETWORKID} \n"
 
-  export USERID=$(jq --raw-output 'org1.key' ./config/vehicle_tc.json)
+  export USERID=$(jq --raw-output '.org1.key' ./config/vehicle_tc.json)
   printf "\n userid ${USERID} \n"
 
-  export PASSWORD=$(jq --raw-output 'org1.secret' ./config/vehicle_tc.json)
+  export PASSWORD=$(jq --raw-output '.org1.secret' ./config/vehicle_tc.json)
   printf "\n password ${PASSWORD} \n"
 
-  export API_URL=$(jq --raw-output 'org1.url' ./config/vehicle_tc.json)
+  export API_URL=$(jq --raw-output '.org1.url' ./config/vehicle_tc.json)
   printf "\n apiurl ${API_URL} \n"
 
   #cf service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
@@ -153,15 +153,12 @@ node -v
 
   echo curl -X PUT ${CLOUDANT_URL}/${CF_APP}
        curl -X PUT ${CLOUDANT_URL}/${CF_APP}
-#  echo curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
-#       curl -X PUT ${CLOUDANT_URL}/${CLOUDANT_SERVICE_INSTANCE}
 
-  #export CLOUDANT_CREDS=$(jq ". + {database: \"${CLOUDANT_SERVICE_INSTANCE}\"}" ./config/cloudant-creds.txt)
   export CLOUDANT_CREDS=$(jq ". + {database: \"${CF_APP}\"}" ./config/cloudant-creds.txt)
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
-  $(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/service_credentials) > ./config/raw_profile.json
+  curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/service_credentials > ./config/raw_profile.json
 
   jq --raw-output 'del(.credentials[0].peers."org2-peer1")  | .credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0].client.connection.timeout.peer.endorser = 600 | .credentials[0].client.connection.timeout.peer.eventHub = 600 | .credentials[0].client.connection.timeout.peer.eventReg = 600 | .credentials[0].client.connection.timeout.orderer = 600 | .credentials[0]' ./config/raw_profile.json > ./config/connection-profile.json
 
