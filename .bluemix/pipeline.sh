@@ -5,7 +5,7 @@ export IBP_NAME="ibm-blockchain-5-dev"
 export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
-export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180312111923714"
+#export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180312111923714"
 #export CLOUDANT_SERVICE_INSTANCE="vehiclemanufacture-20180308094355941"
 
 detect_exit() {
