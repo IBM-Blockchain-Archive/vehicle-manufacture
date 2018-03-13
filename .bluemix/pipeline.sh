@@ -300,11 +300,11 @@ node -v
 EOF
   export NODE_CONFIG
 
-  composer card import -f ./admin@vehicle-manufacture-network.card
-
-  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
-
-  composer network ping -c admin@vehicle-manufacture-network
+#  composer card import -f ./admin@vehicle-manufacture-network.card
+#
+#  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
+#
+#  composer network ping -c admin@vehicle-manufacture-network
 
   cd node_modules/composer-playground
   npm install @ampretia/composer-wallet-cloudant
