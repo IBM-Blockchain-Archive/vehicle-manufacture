@@ -152,7 +152,7 @@ function openWebSocket($scope, $rootScope) {
     wsUri = 'ws://' + location.hostname + ':' + location.port;
   }
   console.log(' Connecting to websocket', wsUri);
-    var webSocketURL = 'ws://' + wsUri;
+    var webSocketURL = wsUri;
     var websocket = new WebSocket(webSocketURL);
     websocket.onopen = function () {
         console.log('Tutorial websocket is open');
