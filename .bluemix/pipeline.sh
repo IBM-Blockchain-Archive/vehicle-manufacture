@@ -158,7 +158,10 @@ node -v
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
-  curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/service_credentials > ./config/raw_profile.json
+  echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/service_credentials
+       curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/service_credentials > ./config/raw_profile.json
+
+  cat ./config/raw_profile.json
 
   jq --raw-output 'del(.credentials[0].peers."org2-peer1")  | .credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0].client.connection.timeout.peer.endorser = 600 | .credentials[0].client.connection.timeout.peer.eventHub = 600 | .credentials[0].client.connection.timeout.peer.eventReg = 600 | .credentials[0].client.connection.timeout.orderer = 600 | .credentials[0]' ./config/raw_profile.json > ./config/connection-profile.json
 
