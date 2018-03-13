@@ -343,7 +343,7 @@ EOF
 
   printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
   cf push ${CF_APP} --no-start -c "node server/app.js"
-  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"https://composer-rest-server-${CF_APP}/api\"}"
+  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://composer-rest-server-${CF_APP}\", \"httpURL\": \"https://composer-rest-server-${CF_APP}/api\"}"
 
   # Bind app to the blockchain service
   printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
