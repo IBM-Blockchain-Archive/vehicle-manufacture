@@ -1,0 +1,8 @@
+---
+applications:
+- disk_quota: 1024M
+  name: vehicleManufacturing
+  command: "node server/app.js"
+  path: "."
+  instances: 1
+  memory: 256M

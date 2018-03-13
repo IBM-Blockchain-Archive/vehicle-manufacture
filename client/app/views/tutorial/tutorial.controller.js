@@ -145,11 +145,19 @@ function awaitIFrameLoad($scope, $rootScope) {
 }
 
 function openWebSocket($scope, $rootScope) {
-    var webSocketURL = 'ws://' + location.host;
-    let websocket = new WebSocket(webSocketURL);
+  var wsUri = '';
+  if (location.protocol === 'https:') {
+    wsTxt = '[wss]';
+    wsUri = 'wss://' + location.host;
+  } else {
+    wsUri = 'ws://' + location.hostname + ':' + location.port;
+  }
+  console.log(' Connecting to websocket', wsUri);
+    var webSocketURL = wsUri;
+    var websocket = new WebSocket(webSocketURL);
     websocket.onopen = function () {
         console.log('Tutorial websocket is open');
-    }
+    };
 
     websocket.onclose = function () {
         console.log('Tutorial websocket closed');

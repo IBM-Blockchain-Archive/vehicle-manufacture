@@ -1,0 +1,28 @@
+---
+stages:
+- name: Deploy VehicleManufacture Application
+  inputs:
+  - type: git
+    branch: master
+    service: ${SAMPLE_REPO}
+  triggers:
+  - type: commit
+  properties:
+  - name: SERVICE_INSTANCE_NAME
+    value: '{{sin}}'
+    type: text
+  - name: SAMPLE_REPO
+    value: '{{SAMPLE_REPO}}'
+    type: text
+  jobs:
+  - name: deploy-vehicle-manufacture-app
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |
+      set -ev
+      ./.bluemix/pipeline.sh
+
