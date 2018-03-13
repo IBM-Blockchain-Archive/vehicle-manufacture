@@ -238,7 +238,7 @@ node -v
 #    sleep 10s
 #    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
 #         STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
-#         PEER_STATUS=$(echo ${STATUS} | jq --raw-output ".[\"${PEER}\"]")
+#         PEER_STATUS=$(echo ${STATUS} | jq --raw-output ".[\"${PEER}\"].status")
 #    i=$[$i+1]
 #    done
 #
@@ -291,22 +291,28 @@ node -v
 # 8. Install Composer Playground
 # -----------------------------------------------------------
 #  printf "\n ---- Install composer-playground ----- \n"
-#  npm install -g @ampretia/composer-wallet-cloudant
+  npm install composer-playground@next
+
+  npm install -g @ampretia/composer-wallet-cloudant
 
   read -d '' NODE_CONFIG << EOF
 {"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
 EOF
   export NODE_CONFIG
 
-#  composer card import -f ./admin@vehicle-manufacture-network.card
-#
-#  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
-#
-#  composer network ping -c admin@vehicle-manufacture-network
+  composer card import -f ./admin@vehicle-manufacture-network.card
 
-  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.0 -i 1 -m 256M --no-start
+  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
+
+  composer network ping -c admin@vehicle-manufacture-network
+
+  cd node_modules/composer-playground
+  npm install @ampretia/composer-wallet-cloudant
+
+  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
   cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-playground-${CF_APP}
+  cd ../..
 
 # -----------------------------------------------------------
 # 9. Install Composer Rest Server
