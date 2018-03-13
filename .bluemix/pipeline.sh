@@ -159,7 +159,7 @@ node -v
   printf "\n ${CLOUDANT_CREDS} \n"
 
   echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/connection_profile
-       curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/connection_profile > ./config/connection_profile.json
+       curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/connection_profile > ./config/connection-profile.json
 
   printf "\n --- connection-profile.json --- \n"
   cat ./config/connection-profile.json
