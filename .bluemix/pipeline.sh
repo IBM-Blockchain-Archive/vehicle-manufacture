@@ -131,6 +131,18 @@ node -v
   chmod +x jq
   export PATH=$PATH:$PWD
 
+  export NETWORKID=$(jq --raw-output '.org1."network_id"' ./config/vehicle_tc.json)
+  printf "\n networkid ${NETWORKID} \n"
+
+  export USERID=$(jq --raw-output 'org1.key' ./config/vehicle_tc.json)
+  printf "\n userid ${USERID} \n"
+
+  export PASSWORD=$(jq --raw-output 'org1.secret' ./config/vehicle_tc.json)
+  printf "\n password ${PASSWORD} \n"
+
+  export API_URL=$(jq --raw-output 'org1.url' ./config/vehicle_tc.json)
+  printf "\n apiurl ${API_URL} \n"
+
   #cf service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
   cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
   tail -n +2 ./config/cloudant-creds-temp.txt > ./config/cloudant-creds.txt
@@ -149,25 +161,15 @@ node -v
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
-  jq --raw-output 'del(.credentials[0].peers."org2-peer1")  | .credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0].client.connection.timeout.peer.endorser = 600 | .credentials[0].client.connection.timeout.peer.eventHub = 600 | .credentials[0].client.connection.timeout.peer.eventReg = 600 | .credentials[0].client.connection.timeout.orderer = 600 | .credentials[0]' ./config/vehicle_tc.json > ./config/connection-profile.json
+  $(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/service_credentials) > ./config/raw_profile.json
+
+  jq --raw-output 'del(.credentials[0].peers."org2-peer1")  | .credentials[0].channels.defaultchannel.chaincodes = [] | .credentials[0].client.connection.timeout.peer.endorser = 600 | .credentials[0].client.connection.timeout.peer.eventHub = 600 | .credentials[0].client.connection.timeout.peer.eventReg = 600 | .credentials[0].client.connection.timeout.orderer = 600 | .credentials[0]' ./config/raw_profile.json > ./config/connection-profile.json
 
   printf "\n --- connection-profile.json --- \n"
   cat ./config/connection-profile.json
 
   export SECRET=$(jq --raw-output 'limit(1;.certificateAuthorities[].registrar[0].enrollSecret)' ./config/connection-profile.json)
   printf "\n secret ${SECRET} \n"
-
-  export NETWORKID=$(jq --raw-output '."x-networkId"' ./config/connection-profile.json)
-  printf "\n networkid ${NETWORKID} \n"
-
-  export USERID=$(jq --raw-output '."x-api".key' ./config/connection-profile.json)
-  printf "\n userid ${USERID} \n"
-
-  export PASSWORD=$(jq --raw-output '."x-api".secret' ./config/connection-profile.json)
-  printf "\n password ${PASSWORD} \n"
-
-  export API_URL=$(jq --raw-output '."x-api".url' ./config/connection-profile.json)
-  printf "\n apiurl ${API_URL} \n"
 
   export MSPID=$(jq --raw-output 'limit(1; .organizations[].mspid)' ./config/connection-profile.json)
   printf "\n mspid ${MSPID} \n"
