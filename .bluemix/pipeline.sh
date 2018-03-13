@@ -50,7 +50,7 @@ node -v
     echo "A service instance name was provided, lets use that"
   else
     echo "A service instance name was NOT provided, lets use the default one"
-    export SERVICE_INSTANCE_NAME="Blockchain-${CF_APP}"
+    export SERVICE_INSTANCE_NAME="blockchain-${CF_APP}"
   fi
     printf "Using service instance name '${SERVICE_INSTANCE_NAME}'\n"
 
@@ -330,7 +330,7 @@ EOF
   cd node_modules/composer-rest-server
 
   npm install @ampretia/composer-wallet-cloudant
-  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n always -w true" -i 1 -m 256M --no-start
+  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
   cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-rest-server-${CF_APP}
   cd ../..
@@ -341,10 +341,9 @@ EOF
 
 #  # Push app (don't start yet, wait for binding)
 
-  #export CF_APP="vehiclemanufacture-20180308151844225" #TODO delete this line
   printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
   cf push ${CF_APP} --no-start -c "node server/app.js"
-  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"composer-rest-server-${CF_APP}/api\"}"
+  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"ws://composer-rest-server-${CF_APP}\", \"httpURL\": \"https://composer-rest-server-${CF_APP}/api\"}"
 
   # Bind app to the blockchain service
   printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
