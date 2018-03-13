@@ -232,15 +232,7 @@ node -v
 #
 #  export PEER_STATUS="not running"
 #  i=0
-##
-##  while [ $i -lt 12 ]
-##    do
-##    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-##         curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-##    sleep 10s
-##    i=$[$i+1]
-##  done
-#
+
 #  while [[ "$PEER_STATUS" != "running" && "$i" -lt "12" ]]
 #    do
 #    sleep 10s
@@ -312,7 +304,7 @@ EOF
 #
 #  composer network ping -c admin@vehicle-manufacture-network
 
-  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.0 -i 1 -m 128M --no-start
+  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.0 -i 1 -m 256M --no-start
   cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-playground-${CF_APP}
 
