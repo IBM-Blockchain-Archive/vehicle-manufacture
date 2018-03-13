@@ -5,7 +5,8 @@ export IBP_NAME="ibm-blockchain-5-staging"
 export IBP_PLAN="ibm-blockchain-plan-v1-starter-staging"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
-#export SERVICE_INSTANCE_NAME="Blockchain-vehiclemanufacture-20180312111923714"
+export SERVICE_INSTANCE_NAME="blockchain-vehiclemanufacture-20180313102551270"
+export CF_APP="vehiclemanufacture-20180313102551270"
 #export CLOUDANT_SERVICE_INSTANCE="vehiclemanufacture-20180308094355941"
 
 detect_exit() {
@@ -189,151 +190,154 @@ node -v
 
   composer -v
 
-  printf "\n ----- create ca card ----- \n"
-  composer card create -f ca.card -p ./config/connection-profile.json -u admin -s ${SECRET}
-  composer card import -f ca.card -n ca
-
-# -----------------------------------------------------------
-# 5. Add and sync admin cert
-# -----------------------------------------------------------
-  # request identity
-  composer identity request --card ca --path ./credentials
-  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
-
-  # add admin cert
-  printf "\n ----- add certificate ----- \n"
-  cat << EOF > request.json
-{
-"msp_id": "${MSPID}",
-"peers": ["${PEER}"],
-"adminCertName": "my cert",
-"adminCertificate": "${PUBLIC_CERT}"
-}
-EOF
-
-  cat request.json
-  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
-       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
-
-  # stop peer
-  printf "\n ----- stop peer ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-
-  # start peer
-  printf "\n ----- start peer ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
-       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
-
-
-  #wait for peer to start
-  printf "\n ----- wait for peer to start --- \n"
-
-  export PEER_STATUS="not running"
-  i=0
+#  printf "\n ----- create ca card ----- \n"
+#  composer card create -f ca.card -p ./config/connection-profile.json -u admin -s ${SECRET}
+#  composer card import -f ca.card -n ca
 #
-#  while [ $i -lt 12 ]
+## -----------------------------------------------------------
+## 5. Add and sync admin cert
+## -----------------------------------------------------------
+#  # request identity
+#  composer identity request --card ca --path ./credentials
+#  export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
+#
+#  # add admin cert
+#  printf "\n ----- add certificate ----- \n"
+#  cat << EOF > request.json
+#{
+#"msp_id": "${MSPID}",
+#"peers": ["${PEER}"],
+#"adminCertName": "my cert",
+#"adminCertificate": "${PUBLIC_CERT}"
+#}
+#EOF
+#
+#  cat request.json
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
+#
+#  # stop peer
+#  printf "\n ----- stop peer ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+#
+#  # start peer
+#  printf "\n ----- start peer ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+#
+#
+#  #wait for peer to start
+#  printf "\n ----- wait for peer to start --- \n"
+#
+#  export PEER_STATUS="not running"
+#  i=0
+##
+##  while [ $i -lt 12 ]
+##    do
+##    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
+##         curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
+##    sleep 10s
+##    i=$[$i+1]
+##  done
+#
+#  while [[ "$PEER_STATUS" != "running" && "$i" -lt "12" ]]
 #    do
-#    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-#         curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
 #    sleep 10s
+#    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
+#         STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
+#         PEER_STATUS=$(echo ${STATUS} | jq --raw-output ".[\"${PEER}\"]")
 #    i=$[$i+1]
+#    done
+#
+## sync certificates
+#  printf "\n ----- sync certificate ----- \n"
+#  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
+#       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
+#
+#
+#
+## -----------------------------------------------------------
+## 6. Create new card
+## -----------------------------------------------------------
+#  printf "\n ---- Create admin card ----- \n "
+#  composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
+#
+#  composer card import -f adminCard.card -n adminCard
+#
+## -----------------------------------------------------------
+## 7. Deploy the network
+## -----------------------------------------------------------
+#  printf "\n --- get network --- \n"
+#  #TODO make this not unstable
+#  npm install vehicle-manufacture-network@unstable
+#
+#  printf "\n --- create archive --- \n"
+#  composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
+#
+#  printf "\n --- install network --- \n"
+#  composer runtime install -c adminCard -n vehicle-manufacture-network
+#
+#  export DEPLOY_STATUS="installed_cc"
+#  update_status
+#
+#  printf "\n --- start network --- \n"
+#
+#  while ! composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card; do
+#    echo sleeping to retry network start
+#    sleep 30s
 #  done
-
-  while [[ "$PEER_STATUS" != "running" && "$i" -lt "12" ]]
-    do
-    sleep 10s
-    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-         STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
-         PEER_STATUS=$(echo ${STATUS} | jq --raw-output ".[\"${PEER}\"]")
-    i=$[$i+1]
-    done
-
-# sync certificates
-  printf "\n ----- sync certificate ----- \n"
-  echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
-       curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
-
-
-
-# -----------------------------------------------------------
-# 6. Create new card
-# -----------------------------------------------------------
-  printf "\n ---- Create admin card ----- \n "
-  composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
-
-  composer card import -f adminCard.card -n adminCard
-
-# -----------------------------------------------------------
-# 7. Deploy the network
-# -----------------------------------------------------------
-  printf "\n --- get network --- \n"
-  #TODO make this not unstable
-  npm install vehicle-manufacture-network@unstable
-
-  printf "\n --- create archive --- \n"
-  composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
-
-  printf "\n --- install network --- \n"
-  composer runtime install -c adminCard -n vehicle-manufacture-network
-
-  export DEPLOY_STATUS="installed_cc"
-  update_status
-
-  printf "\n --- start network --- \n"
-
-  while ! composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card; do
-    echo sleeping to retry network start
-    sleep 30s
-  done
-
-  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
-
-  composer card import -f ./admin@vehicle-manufacture-network.card
-
-  export DEPLOY_STATUS="instantiated_cc"
-  update_status
+#
+#  composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
+#
+#  composer card import -f ./admin@vehicle-manufacture-network.card
+#
+#  export DEPLOY_STATUS="instantiated_cc"
+#  update_status
 
 # -----------------------------------------------------------
 # 8. Install Composer Playground
 # -----------------------------------------------------------
-  printf "\n ---- Install composer-playground ----- \n"
-  npm install composer-playground@next
+#  printf "\n ---- Install composer-playground ----- \n"
+#  npm install composer-playground@next
+#
+#  npm install -g @ampretia/composer-wallet-cloudant
 
-  npm install -g @ampretia/composer-wallet-cloudant
-
-  read -d '' NODE_CONFIG << EOF
-{"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
-EOF
-  export NODE_CONFIG
-
-  composer card import -f ./admin@vehicle-manufacture-network.card
-
-  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
-
-  composer network ping -c admin@vehicle-manufacture-network
-
-  cd node_modules/composer-playground
-  npm install @ampretia/composer-wallet-cloudant
-
-  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
-  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-  cf start composer-playground-${CF_APP}
-  cd ../..
+#  read -d '' NODE_CONFIG << EOF
+#{"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
+#EOF
+#  export NODE_CONFIG
+#
+#  composer card import -f ./admin@vehicle-manufacture-network.card
+#
+#  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
+#
+#  composer network ping -c admin@vehicle-manufacture-network
+#
+#  cd node_modules/composer-playground
+#  npm install @ampretia/composer-wallet-cloudant
+#
+#  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
+#  cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+#  cf start composer-playground-${CF_APP}
+#  cd ../..
 
 # -----------------------------------------------------------
 # 9. Install Composer Rest Server
 # -----------------------------------------------------------
-  printf "\n----- Install REST server ----- \n"
-  npm install composer-rest-server@next
+#  printf "\n----- Install REST server ----- \n"
+#  npm install composer-rest-server@next
+#
+#  cd node_modules/composer-rest-server
+#
+#  npm install @ampretia/composer-wallet-cloudant
+#  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
+#  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
+#  cf start composer-rest-server-${CF_APP}
+#  cd ../..
 
-  cd node_modules/composer-rest-server
+  export REST_SERVER_URL=$(cf app composer-rest-server-${CF_APP} | grep routes: | awk '{print $2}')
 
-  npm install @ampretia/composer-wallet-cloudant
-  cf push composer-rest-server-${CF_APP} -c "node cli.js -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
-  cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
-  cf start composer-rest-server-${CF_APP}
-  cd ../..
 
 # -----------------------------------------------------------
 # 10. Start the app
@@ -343,7 +347,7 @@ EOF
 
   printf "\n --- Creating the Vehicle manufacture application '${CF_APP}' ---\n"
   cf push ${CF_APP} --no-start -c "node server/app.js"
-  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://composer-rest-server-${CF_APP}\", \"httpURL\": \"https://composer-rest-server-${CF_APP}/api\"}"
+  cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://${REST_SERVER_URL}\", \"httpURL\": \"https://${REST_SERVER_URL}/api\"}"
 
   # Bind app to the blockchain service
   printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
