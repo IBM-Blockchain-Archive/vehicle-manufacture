@@ -22,10 +22,10 @@ detect_exit() {
 }
 
 update_status() {
-    echo "Updating Deployment Status - ${NETWORK_ID}"
+    echo "Updating Deployment Status - ${NETWORKID}"
     echo '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}' \
     echo curl -X PUT -s -S\
-      "$API_HOST/api/v1/networks/$NETWORK_ID/sample/vehicle_manufacture" \
+      "$API_HOST/api/v1/networks/$NETWORKID/sample/vehicle_manufacture" \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \
@@ -345,7 +345,7 @@ EOF
 # -----------------------------------------------------------
   date
   printf "\n ---- Install composer-playground ----- \n"
-  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.1 -i 1 -m 256M --no-start--no-manifest
+  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.1 -i 1 -m 256M --no-start --no-manifest
   cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-playground-${CF_APP}
 
@@ -358,7 +358,7 @@ EOF
 # -----------------------------------------------------------
   date
   printf "\n----- Install REST server ----- \n"
-  cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.1 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
+  cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.1 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start --no-manifest
   cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-rest-server-${CF_APP}
 
