@@ -24,12 +24,19 @@ detect_exit() {
 update_status() {
     echo "Updating Deployment Status - ${NETWORK_ID}"
     echo '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": '$COMPLETED_STEP'}'
+    echo curl -X PUT -s -S\
+      "$API_HOST/api/v1/networks/$NETWORK_ID/sample/vehicle_manufacture" \
+      -H 'Cache-Control: no-cache' \
+      -H 'Content-Type: application/json' \
+      -u $USERID:$PASSWORD \
+      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}' \
+      | ./jq '.' || true
     curl -X PUT -s -S\
       "$API_HOST/api/v1/networks/$NETWORK_ID/sample/vehicle_manufacture" \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \
-      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": '$COMPLETED_STEP'}' \
+      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}' \
       | ./jq '.' || true
 }
 
