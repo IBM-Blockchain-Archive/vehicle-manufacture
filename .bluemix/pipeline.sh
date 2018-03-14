@@ -345,7 +345,7 @@ EOF
 # -----------------------------------------------------------
   date
   printf "\n ---- Install composer-playground ----- \n"
-  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.1 -i 1 -m 256M --no-start
+  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.1 -i 1 -m 256M --no-start--no-manifest
   cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-playground-${CF_APP}
 
