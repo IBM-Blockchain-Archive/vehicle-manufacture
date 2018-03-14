@@ -187,14 +187,14 @@ printf "\n ---- Installed node and nvm ----- \n"
 # 4. Install composer-cli
 # -----------------------------------------------------------
   date
-  printf "\n ---- Install composer-cli ----- \n "
+  printf "\n ---- Install composer-cli and composer-wallet-cloudant ----- \n "
 
-  npm install -g composer-cli@0.18.0
+  npm install -g composer-cli@0.18.1 @ampretia/composer-wallet-cloudant
 
   composer -v
 
   date
-  printf "\n ---- Installed composer-cli ----- \n "
+  printf "\n ---- Installed composer-cli and composer-wallet-cloudant ----- \n "
 
 ## -----------------------------------------------------------
 ## 5. Add and sync admin cert
@@ -305,10 +305,6 @@ EOF
    sleep 30s
  done
 
- composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
-
- composer card import -f ./admin@vehicle-manufacture-network.card
-
  export COMPLETED_STEP="instantiated_cc"
  update_status
 
@@ -316,33 +312,44 @@ EOF
  printf "\n --- started network --- \n"
 
 # -----------------------------------------------------------
-# 8. Install Composer Playground
+# Create Composer configuration for Cloudant wallet
 # -----------------------------------------------------------
-  date
-  printf "\n ---- Install composer-playground ----- \n"
-  npm install composer-playground@next
-
-  npm install -g @ampretia/composer-wallet-cloudant
+ date
+ printf "\n --- create composer configuration --- \n"
 
   read -d '' NODE_CONFIG << EOF
 {"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
 EOF
   export NODE_CONFIG
 
+ date
+ printf "\n --- created composer configuration --- \n"
+
+# -----------------------------------------------------------
+# Import business network card into Cloudant wallet
+# -----------------------------------------------------------
+ date
+ printf "\n --- import business network card --- \n"
+
+ composer card create -n vehicle-manufacture-network -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem
+
  composer card import -f ./admin@vehicle-manufacture-network.card
 
  while ! composer network ping -c admin@vehicle-manufacture-network; do sleep 5; done
 
- composer network ping -c admin@vehicle-manufacture-network
+ date
+ printf "\n --- imported business network card --- \n"
 
-  cd node_modules/composer-playground
-  npm install @ampretia/composer-wallet-cloudant
-
-  cf push composer-playground-${CF_APP} -c "node cli.js" -i 1 -m 128M --no-start
+# -----------------------------------------------------------
+# 8. Install Composer Playground
+# -----------------------------------------------------------
+  date
+  printf "\n ---- Install composer-playground ----- \n"
+  cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.1 -i 1 -m 256M --no-start
   cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-playground-${CF_APP}
-  cd ../..
 
+  export PLAYGROUND_URL=$(cf app composer-playground-${CF_APP} | grep routes: | awk '{print $2}')
   date
   printf "\n ---- Installed composer-playground ----- \n"
 
@@ -351,7 +358,7 @@ EOF
 # -----------------------------------------------------------
   date
   printf "\n----- Install REST server ----- \n"
-  cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.0 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
+  cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.1 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start
   cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
   cf start composer-rest-server-${CF_APP}
 
