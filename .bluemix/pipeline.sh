@@ -109,9 +109,6 @@ printf "\n ---- Installed node and nvm ----- \n"
   printf "\n --- Creating an instance of the IBM Blockchain Platform service ---\n"
   cf create-service ${IBP_NAME} ${IBP_PLAN} ${SERVICE_INSTANCE_NAME}
 
-  #needed to ensure channels are created
-  sleep 30s
-
   cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
   date
@@ -160,8 +157,21 @@ printf "\n ---- Installed node and nvm ----- \n"
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
-  echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile
-       curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile > ./config/connection-profile.json
+  get_connection_profile() {
+    echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile
+    curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile > ./config/connection-profile.json
+  }
+
+  get_connection_profile
+  while ! jq -e ".channels.defaultchannel" ./config/connection-profile.json
+  do
+    sleep 10
+    get_connection_profile
+  done
+
+
+  #echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile
+  #     curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile > ./config/connection-profile.json
 
   printf "\n --- connection-profile.json --- \n"
   cat ./config/connection-profile.json
