@@ -10,9 +10,9 @@ export APP_URL="unknown_yet"  # we correct this later
 #export CLOUDANT_SERVICE_INSTANCE="vehiclemanufacture-20180308094355941"
 
 detect_exit() {
-    if [ "$DEPLOY_STATUS" != "sample_up" ]; then
+    if [ "$COMPLETED_STEP" != "sample_up" ]; then
       printf "\n\n --- Uh oh something failed... ---\n"
-      export DEPLOY_STATUS="tc_error"
+      export COMPLETED_STEP="tc_error"
       if [ "$API_URL" != "" ]; then
         update_status
       fi
@@ -22,15 +22,15 @@ detect_exit() {
 }
 
 update_status() {
-    echo "Updating Deployment Status"
-    echo '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": "'"$DEPLOY_STATUS"'"}'
+    echo "Updating Deployment Status - ${NETWORK_ID}"
+    echo '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": '$COMPLETED_STEP'}'
     curl -X PUT -s -S\
-      "$API_URL/api/v1/networks/$NETWORKID/sample/vehiclemanufacture" \
+      "$API_HOST/api/v1/networks/$NETWORK_ID/sample/vehicle_manufacture" \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \
-      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "status": "'"$DEPLOY_STATUS"'"}' \
-      | jq '.' || true
+      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": '$COMPLETED_STEP'}' \
+      | ./jq '.' || true
 }
 
 date
@@ -135,8 +135,8 @@ printf "\n ---- Installed node and nvm ----- \n"
   export PASSWORD=$(jq --raw-output '.org1.secret' ./config/vehicle_tc.json)
   printf "\n password ${PASSWORD} \n"
 
-  export API_URL=$(jq --raw-output '.org1.url' ./config/vehicle_tc.json)
-  printf "\n apiurl ${API_URL} \n"
+  export API_HOST=$(jq --raw-output '.org1.url' ./config/vehicle_tc.json)
+  printf "\n apiurl ${API_HOST} \n"
 
   #cf service-key cloudant-${CLOUDANT_SERVICE_INSTANCE} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
   cf service-key cloudant-${CF_APP} ${VCAP_KEY_NAME} > ./config/cloudant-creds-temp.txt
@@ -153,8 +153,8 @@ printf "\n ---- Installed node and nvm ----- \n"
 
   printf "\n ${CLOUDANT_CREDS} \n"
 
-  echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/connection_profile
-       curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/connection_profile > ./config/connection-profile.json
+  echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile
+       curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/connection_profile > ./config/connection-profile.json
 
   printf "\n --- connection-profile.json --- \n"
   cat ./config/connection-profile.json
@@ -170,7 +170,7 @@ printf "\n ---- Installed node and nvm ----- \n"
 
   export CHANNEL="defaultchannel"
 
-  export DEPLOY_STATUS="received_creds"
+  export COMPLETED_STEP="received_creds"
   update_status
 
   date
@@ -213,20 +213,20 @@ printf "\n ---- Installed node and nvm ----- \n"
 EOF
 
  cat request.json
- echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
-      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_URL}/api/v1/networks/${NETWORKID}/certificates
+ echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_HOST}/api/v1/networks/${NETWORKID}/certificates
+      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary @request.json ${API_HOST}/api/v1/networks/${NETWORKID}/certificates
 
  # stop peer
  date
  printf "\n ----- stop peer ----- \n"
- echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
-      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+ echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_HOST}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
+      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_HOST}/api/v1/networks/${NETWORKID}/nodes/${PEER}/stop
 
  # start peer
  date
  printf "\n ----- start peer ----- \n"
- echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
-      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+ echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_HOST}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
+      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_HOST}/api/v1/networks/${NETWORKID}/nodes/${PEER}/start
 
 
  #wait for peer to start
@@ -239,8 +239,8 @@ EOF
  while [[ "$PEER_STATUS" != "running" && "$i" -lt "12" ]]
    do
    sleep 10s
-   echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status
-        STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_URL}/api/v1/networks/${NETWORKID}/nodes/status)
+   echo curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/nodes/status
+        STATUS=$(curl -X GET --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} ${API_HOST}/api/v1/networks/${NETWORKID}/nodes/status)
         PEER_STATUS=$(echo ${STATUS} | jq --raw-output ".[\"${PEER}\"].status")
    i=$[$i+1]
    done
@@ -248,8 +248,8 @@ EOF
 # sync certificates
  date
  printf "\n ----- sync certificate ----- \n"
- echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
-      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_URL}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
+ echo curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_HOST}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
+      curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --basic --user ${USERID}:${PASSWORD} --data-binary '{}' ${API_HOST}/api/v1/networks/${NETWORKID}/channels/${CHANNEL}/sync
 
  date
  printf "\n ----- created ca card ----- \n"
@@ -287,7 +287,7 @@ EOF
  date
  printf "\n --- installed network --- \n"
 
- export DEPLOY_STATUS="installed_cc"
+ export COMPLETED_STEP="installed_cc"
  update_status
 
  date
@@ -302,7 +302,7 @@ EOF
 
  composer card import -f ./admin@vehicle-manufacture-network.card
 
- export DEPLOY_STATUS="instantiated_cc"
+ export COMPLETED_STEP="instantiated_cc"
  update_status
 
  date
@@ -380,7 +380,7 @@ EOF
 # -----------------------------------------------------------
 # 11. Ping IBP that the application is alive  - [ Optional ]
 # -----------------------------------------------------------
-  export DEPLOY_STATUS="sample_up"
+  export COMPLETED_STEP="sample_up"
   update_status
 
   printf "\n\n --- We are done here. ---\n\n"
