@@ -5,7 +5,7 @@
   "description": "Vehicle Lifecycle - Tutorial",
   "main": "index.js",
   "scripts": {
-    "postinstall": "./getSampleApps.sh && bower install",
+    "postinstall": "bower install",
     "start": "node server/app.js"
   },
   "author": "Hyperledger Composer",
@@ -18,9 +18,9 @@
     "express": "^4.15.2",
     "express-less": "^0.1.0",
     "request": "^2.81.0",
-    "vehicle-manufacture-car-builder": "unstable",
-    "vehicle-manufacture-manufacturing": "unstable",
-    "vehicle-manufacture-vda": "unstable",
+    "vehicle-manufacture-car-builder": "0.0.6",
+    "vehicle-manufacture-manufacturing": "0.0.6",
+    "vehicle-manufacture-vda": "0.0.6",
     "ws": "^2.3.1"
   }
 }
