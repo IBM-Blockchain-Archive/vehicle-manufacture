@@ -45,9 +45,6 @@ services:
           SIN: 'testing'
           SAMPLE_REPO: vehicle-repo
           CF_APP_NAME: '{{form.pipeline.parameters.prod-app-name}}'
-          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
-          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
-          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
         execute: true
   vehicle-app:
     service_id: customtool
@@ -64,11 +61,8 @@ form:
   pipeline:
     parameters:
       prod-app-name: '{{services.vehicle-repo.parameters.repo_name}}'
+      org-name: '{{org_name}}'
+      space-name: '{{space_name}}'
+      cloud-region: '{{tc_region}}'
     schema:
       $ref: deploy.json
-  #customtool:
-    #parameters:
-      #type: 'Marbles'
-      #imageUrl: https://github.com/dshuffma-ibm/marbles/raw/v4.0/public/imgs/favicon-36.png
-    #schema:
-      #$ref: customtool-ui.json
