@@ -61,7 +61,7 @@ install_playground() {
 push_restserver() {
     date
     printf "\n----- Pushing REST server ----- \n"
-    cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.1 -c "node cli.js -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start --no-manifest
+    cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.1 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start --no-manifest
     cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
     date
     printf "\n----- Pushed REST server ----- \n"
