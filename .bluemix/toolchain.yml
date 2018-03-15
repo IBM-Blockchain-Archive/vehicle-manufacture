@@ -36,13 +36,11 @@ services:
       services:
         - vehicle-repo
       name: '{{services.vehicle-repo.parameters.repo_name}}'
-      ui-pipeline: true
-      sin: 'test'
+      ui-pipeline: false
       configuration:
         content:
           $text: pipeline.yml
         env:
-          SIN: 'testing'
           SAMPLE_REPO: vehicle-repo
           CF_APP_NAME: '{{form.pipeline.parameters.prod-app-name}}'
         execute: true
