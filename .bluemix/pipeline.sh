@@ -2,7 +2,7 @@
 trap 'detect_exit' 0 1 2 3 6
 
 export IBP_NAME="ibm-blockchain-5-dev"
-export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
+export IBP_PLAN="ibm-blockchain-plan-v1-dev"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
 
@@ -60,7 +60,7 @@ install_playground() {
 push_restserver() {
     date
     printf "\n----- Pushing REST server ----- \n"
-    cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.1 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start --no-manifest
+    cf push ${CF_APP} --docker-image sstone1/vehicle-manufacture-tutorial -i 1 -m 128M --no-start --no-manifest
     cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
     date
     printf "\n----- Pushed REST server ----- \n"
