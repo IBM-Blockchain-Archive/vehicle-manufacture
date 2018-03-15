@@ -270,7 +270,7 @@ printf "\n --- Got service credentials ---\n"
 date
 printf "\n --- create composer configuration --- \n"
 
-read -d '' NODE_CONFIG << EOF
+read -d '' NODE_CONFIG << EOF || true
 {"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
 EOF
 export NODE_CONFIG
