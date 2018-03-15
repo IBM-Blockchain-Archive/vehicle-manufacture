@@ -1,13 +1,10 @@
 #!/bin/bash
 trap 'detect_exit' 0 1 2 3 6
 
-export IBP_NAME="ibm-blockchain-5-staging"
-export IBP_PLAN="ibm-blockchain-plan-v1-starter-staging"
+export IBP_NAME="ibm-blockchain-5-dev"
+export IBP_PLAN="ibm-blockchain-plan-v1-starter-dev"
 export VCAP_KEY_NAME="Credentials-1"
 export APP_URL="unknown_yet"  # we correct this later
-# export SERVICE_INSTANCE_NAME="blockchain-vehiclemanufacture-20180313102551270"
-# export CF_APP="vehiclemanufacture-20180313102551270"
-#export CLOUDANT_SERVICE_INSTANCE="vehiclemanufacture-20180308094355941"
 
 detect_exit() {
     if [ "$COMPLETED_STEP" != "sample_up" ]; then
@@ -403,10 +400,14 @@ printf "\n --- imported business network card --- \n"
 # -----------------------------------------------------------
 # Wait for the apps to push
 # -----------------------------------------------------------
-
+printf "\n----- Waiting for apps to push ----- \n"
+date
 wait ${PLAYGROUND_PID}
 wait ${REST_PID}
 wait ${APP_PID}
+
+date
+printf "\n----- Finished pushing apps ----- \n"
 
 # -----------------------------------------------------------
 # Start Composer Rest Server
