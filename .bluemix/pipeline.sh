@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 trap 'detect_exit' 0 1 2 3 6
 
 export IBP_NAME="ibm-blockchain-5-dev"
