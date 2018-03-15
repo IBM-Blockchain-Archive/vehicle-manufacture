@@ -22,7 +22,7 @@ stages:
       organization: ${PROD_ORG_NAME}
       space: ${PROD_SPACE_NAME}
       application: ${CF_APP_NAME}
-    script: |-
+    script: |
       #!/bin/bash
-      ./.bluemix/pipeline.sh
+      exec ./.bluemix/pipeline.sh
 
