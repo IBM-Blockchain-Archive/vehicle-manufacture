@@ -89,7 +89,7 @@ start_app() {
     # Bind app to the blockchain service
     date
     printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
-    cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
+    cf bind-service ${CF_APP} "${SERVICE_INSTANCE_NAME}" -c "{\"permissions\":\"read-only\"}"
 
     export REST_SERVER_URL=$(cf app composer-rest-server-${CF_APP} | grep routes: | awk '{print $2}')
     cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://${REST_SERVER_URL}\", \"httpURL\": \"https://${REST_SERVER_URL}/api\"}"
@@ -171,9 +171,12 @@ fi
 # -----------------------------------------------------------
 date
 printf "\n --- Creating an instance of the IBM Blockchain Platform service ---\n"
-cf create-service ${IBP_NAME} ${IBP_PLAN} ${SERVICE_INSTANCE_NAME}
+# Only create the service if it doesn't already exist.
+if ! cf service "${SERVICE_INSTANCE_NAME}" > /dev/null 2>&1; then
+cf create-service ${IBP_NAME} ${IBP_PLAN} "${SERVICE_INSTANCE_NAME}"
+fi
 
-cf create-service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
+cf create-service-key "${SERVICE_INSTANCE_NAME}" ${VCAP_KEY_NAME} -c '{"msp_id":"PeerOrg1"}'
 
 date
 printf "\n --- Creating an instance of the Cloud object store ---\n"
@@ -187,7 +190,7 @@ printf "\n --- Created an instance of the Cloud object store ---\n"
 # -----------------------------------------------------------
 date
 printf "\n --- Getting service credentials ---\n"
-cf service-key ${SERVICE_INSTANCE_NAME} ${VCAP_KEY_NAME} > ./config/temp.txt
+cf service-key "${SERVICE_INSTANCE_NAME}" ${VCAP_KEY_NAME} > ./config/temp.txt
 tail -n +2 ./config/temp.txt > ./config/vehicle_tc.json
 
 curl -o jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
