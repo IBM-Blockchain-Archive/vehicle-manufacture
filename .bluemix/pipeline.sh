@@ -66,6 +66,16 @@ push_restserver() {
     printf "\n----- Pushed REST server ----- \n"
 }
 
+start_restserver() {
+    printf "\n----- Start REST server ----- \n"
+    date
+    cf start composer-rest-server-${CF_APP}
+
+    export REST_SERVER_URL=$(cf app composer-rest-server-${CF_APP} | grep routes: | awk '{print $2}')
+    date
+    printf "\n----- Started REST server ----- \n"
+}
+
 push_app() {
     # Push app (don't start yet, wait for binding)
     date
@@ -74,6 +84,22 @@ push_app() {
     cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://${REST_SERVER_URL}\", \"httpURL\": \"https://${REST_SERVER_URL}/api\"}"
     date
     printf "\n --- Pushed the Vehicle manufacture application '${CF_APP}' ---\n"
+}
+
+start_app() {
+    # Bind app to the blockchain service
+    date
+    printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
+    cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
+
+    # Start her up
+    date
+    printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
+    cf start ${CF_APP}
+    export APP_URL=$(cf app ${CF_APP} | grep -Po "(?<=routes:)\s*\S*")
+
+    date
+    printf "\n --- Started the Vehicle manufacture application '${CF_APP}' ---\n"
 }
 
 date
@@ -402,7 +428,6 @@ printf "\n --- imported business network card --- \n"
 # -----------------------------------------------------------
 printf "\n----- Waiting for apps to push ----- \n"
 date
-wait ${PLAYGROUND_PID}
 wait ${REST_PID}
 wait ${APP_PID}
 
@@ -412,35 +437,24 @@ printf "\n----- Finished pushing apps ----- \n"
 # -----------------------------------------------------------
 # Start Composer Rest Server
 # -----------------------------------------------------------
-printf "\n----- Start REST server ----- \n"
-date
-cf start composer-rest-server-${CF_APP}
-
-export REST_SERVER_URL=$(cf app composer-rest-server-${CF_APP} | grep routes: | awk '{print $2}')
-date
-printf "\n----- Started REST server ----- \n"
+start_restserver &
+export REST_PID=$!
 
 # -----------------------------------------------------------
 # Start the app
 # -----------------------------------------------------------
 
-# Bind app to the blockchain service
-date
-printf "\n --- Binding the IBM Blockchain Platform service to Vehicle manufacture app ---\n"
-cf bind-service ${CF_APP} ${SERVICE_INSTANCE_NAME} -c "{\"permissions\":\"read-only\"}"
+start_app &
+export APP_PID=$!
 
-# Start her up
-date
-printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
-cf start ${CF_APP}
-export APP_URL=$(cf app ${CF_APP} | grep -Po "(?<=routes:)\s*\S*")
-
-date
-printf "\n --- Started the Vehicle manufacture application '${CF_APP}' ---\n"
+wait ${REST_PID}
+wait ${APP_PID}
+wait ${PLAYGROUND_PID}
 
 # -----------------------------------------------------------
-# 11. Ping IBP that the application is alive  - [ Optional ]
+# Ping IBP that the application is alive  - [ Optional ]
 # -----------------------------------------------------------
+
 export COMPLETED_STEP="sample_up"
 update_status
 
