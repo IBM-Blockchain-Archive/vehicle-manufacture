@@ -1,6 +1,6 @@
 ---
 stages:
-- name: Deploy VehicleManufacture Application
+- name: Deploy Vehicle Manufacture Application
   inputs:
   - type: git
     branch: master
@@ -14,13 +14,16 @@ stages:
   - name: SAMPLE_REPO
     value: '{{SAMPLE_REPO}}'
     type: text
+  - name: CLOUD_REGION_ID
+    value: '{{tc_region}}'
+    type: text
   jobs:
   - name: deploy-vehicle-manufacture-app
     type: deployer
     target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
+      region_id: '{{tc_region}}'
+      organization: '{{org_name}}'
+      space: '{{space_name}}'
       application: ${CF_APP_NAME}
     script: |
       #!/bin/bash
