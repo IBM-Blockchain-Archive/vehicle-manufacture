@@ -30,7 +30,7 @@ update_status() {
       -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}' \
       | jq '.' || true
     curl -X PUT -s -S\
-      "$API_HOST/api/v1/networks/$NETWORK_ID/sample/vehicle_manufacture" \
+      "$API_HOST/api/v1/networks/$NETWORKID/sample/vehicle_manufacture" \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \

@@ -6,7 +6,7 @@ template:
     $ref: "#/messages/template.name"
   description:
     $ref: "#/messages/template.description"
-  header: '![](toolchain.png)'
+  header: '![](VehicleManufactureToolchainDiagram.png)'
   icon: "../public/imgs/VehicleManufactureToolchain.png"
   required:
     - vehicle-build
