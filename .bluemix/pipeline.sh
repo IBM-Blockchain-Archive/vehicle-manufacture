@@ -81,7 +81,7 @@ push_app() {
     # Push app (don't start yet, wait for binding)
     date
     printf "\n --- Pushing the Vehicle manufacture application '${CF_APP}' ---\n"
-    cf push ${CF_APP} --no-start -c "node server/app.js"
+    cf push ${CF_APP} --docker-image sstone1/vehicle-manufacture-tutorial -i 1 -m 128M --no-start --no-manifest
     cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://${REST_SERVER_URL}\", \"httpURL\": \"https://${REST_SERVER_URL}/api\"}"
     date
     printf "\n --- Pushed the Vehicle manufacture application '${CF_APP}' ---\n"
