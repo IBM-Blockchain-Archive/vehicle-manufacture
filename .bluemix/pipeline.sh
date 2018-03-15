@@ -245,7 +245,7 @@ printf "\n peer ${PEER} \n"
 
 export CHANNEL="defaultchannel"
 
-export COMPLETED_STEP="received_creds"
+export COMPLETED_STEP="1"
 update_status
 
 date
@@ -392,7 +392,7 @@ composer runtime install -c adminCard -n vehicle-manufacture-network
 date
 printf "\n --- installed network --- \n"
 
-export COMPLETED_STEP="installed_cc"
+export COMPLETED_STEP="2"
 update_status
 
 date
@@ -403,7 +403,7 @@ echo sleeping to retry network start
 sleep 30s
 done
 
-export COMPLETED_STEP="instantiated_cc"
+export COMPLETED_STEP="3"
 update_status
 
 date
@@ -431,6 +431,10 @@ printf "\n----- Waiting for apps to push ----- \n"
 date
 wait ${REST_PID}
 wait ${APP_PID}
+wait ${PLAYGROUND_PID}
+
+export COMPLETED_STEP="4"
+update_status
 
 date
 printf "\n----- Finished pushing apps ----- \n"
@@ -449,14 +453,17 @@ start_app &
 export APP_PID=$!
 
 wait ${REST_PID}
+
+export COMPLETED_STEP="5"
+update_status
+
 wait ${APP_PID}
-wait ${PLAYGROUND_PID}
 
 # -----------------------------------------------------------
 # Ping IBP that the application is alive  - [ Optional ]
 # -----------------------------------------------------------
 
-export COMPLETED_STEP="sample_up"
+export COMPLETED_STEP="6"
 update_status
 
 printf "\n\n --- We are done here. ---\n\n"
