@@ -50,4 +50,4 @@ If you enjoyed this tutorial, why not try ordering another vehicle, but on your 
 [//]: # ('INLINE_BUTTON | Reset tutorial | FUNCTION => [ reset | ARGS => [] ]')
 
 ## Want to go more in-depth?
-This sample was built using [IBM Blockchain Platform: Develop](#)
+This sample was built using [IBM Blockchain Platform: Develop](https://console.stage1.bluemix.net/docs/services/blockchain/develop.html#develop-the-network)
