@@ -17,7 +17,7 @@ template:
     git branch: >-
       [master](https://github.com/IBM-Blockchain/vehicle-manufacture/tree/master)
 toolchain:
-  name: 'vehiclemanufacture-tc-{{timestamp}}'
+  name: 'vehicle-manufacture-tc-{{timestamp}}'
   template:
     getting_started:
       $ref: "#/messages/template.gettingStarted"
@@ -25,7 +25,7 @@ services:
   vehicle-repo:
     service_id: githubpublic
     parameters:
-      repo_name: 'vehiclemanufacture-{{timestamp}}'
+      repo_name: 'vehicle-manufacture-{{timestamp}}'
       repo_url: 'https://github.com/IBM-Blockchain/vehicle-manufacture'
       type: clone
       has_issues: false
@@ -66,9 +66,3 @@ form:
       prod-app-name: '{{services.vehicle-repo.parameters.repo_name}}'
     schema:
       $ref: deploy.json
-  #customtool:
-    #parameters:
-      #type: 'Marbles'
-      #imageUrl: https://github.com/dshuffma-ibm/marbles/raw/v4.0/public/imgs/favicon-36.png
-    #schema:
-      #$ref: customtool-ui.json

@@ -1,6 +1,6 @@
 ---
 stages:
-- name: Deploy VehicleManufacture Application
+- name: Deploy Vehicle Manufacture Application
   inputs:
   - type: git
     branch: master
