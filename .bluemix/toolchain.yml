@@ -13,9 +13,9 @@ template:
     - vehicle-repo
   info:
     git url: >-
-      [https://github.com/IBM-Blockchain/VehicleManufacture](https://github.com/IBM-Blockchain/VehicleManufacture)
+      [https://github.com/IBM-Blockchain/vehicle-manufacture](https://github.com/IBM-Blockchain/vehicle-manufacture)
     git branch: >-
-      [master](https://github.com/IBM-Blockchain/VehicleManufacture/tree/master)
+      [master](https://github.com/IBM-Blockchain/vehicle-manufacture/tree/master)
 toolchain:
   name: 'vehiclemanufacture-tc-{{timestamp}}'
   template:
@@ -26,7 +26,7 @@ services:
     service_id: githubpublic
     parameters:
       repo_name: 'vehiclemanufacture-{{timestamp}}'
-      repo_url: 'https://github.com/IBM-Blockchain/VehicleManufacture'
+      repo_url: 'https://github.com/IBM-Blockchain/vehicle-manufacture'
       type: clone
       has_issues: false
       enable_traceability: true
@@ -54,8 +54,8 @@ services:
     parameters:
       type: 'Vehicle'
       lifecyclePhase: 'RUN'
-      imageUrl: 'https://github.com/IBM-Blockchain/VehicleManufacture/raw/master/public/imgs/VehicleManufactureToolchain.png'
-      documentationUrl: 'https://github.com/IBM-Blockchain/VehicleManufacture'
+      imageUrl: 'https://github.com/IBM-Blockchain/vehicle-manufacture/raw/master/public/imgs/VehicleManufactureToolchain.png'
+      documentationUrl: 'https://github.com/IBM-Blockchain/vehicle-manufacture'
       name: 'Node.js Application'
       dashboard_url: 'https://{{form.pipeline.parameters.prod-app-name}}.stage1.mybluemix.net/login'
       description: 'This is your Vehicle Manufacturing node.js application. You do not need to modify anything.'
