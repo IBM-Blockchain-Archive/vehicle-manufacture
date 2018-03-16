@@ -9,6 +9,7 @@ var http = require('http');
 var url = require('url');
 var config = require('config');
 var fs = require('fs');
+var favicon = require('serve-favicon');
 
 var TutorialParser = require(__dirname+'/utils/tutorialParser');
 
@@ -17,6 +18,7 @@ var app = express();
 var server = http.createServer(app);
 
 app.use(bodyParser.json());
+app.use(favicon(path.join(__dirname, '..', 'public', 'icon', 'favicon.ico')));
 
 // static - all our js, css, images, etc go into the assets path
 app.use('/app', express.static(path.join(__dirname, '../client', 'app')));

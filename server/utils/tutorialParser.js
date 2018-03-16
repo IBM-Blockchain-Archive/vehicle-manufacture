@@ -58,8 +58,12 @@ class TutorialParser {
                 subsection.splice(0, 1);
 
                 subsection.forEach((line) => {
+
+                    line = line.replace(/%PLAYGROUND_URL%/, process.env.PLAYGROUND_URL || 'http://localhost:8080');
+                    line = line.replace(/%REST_SERVER_URL%/, process.env.REST_SERVER_URL || 'http://localhost:3000');
+
                     if(line.substr(0, 6) !== '[//]: ') {
-                        let linkRegEx = /\[.*\]\(.*\)/g;
+                        let linkRegEx = /\[.*?\]\(.*?\)/g;
                         
                         if (linkRegEx.test(line)) {
                             let matches = line.match(linkRegEx);
