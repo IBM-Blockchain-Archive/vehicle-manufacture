@@ -92,8 +92,8 @@ start_app() {
     export REST_SERVER_URL=$(cf app composer-rest-server-${CF_APP} | grep routes: | awk '{print $2}')
     export PLAYGROUND_URL=$(cf app composer-playground-${CF_APP} | grep routes: | awk '{print $2}')
     cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://${REST_SERVER_URL}\", \"httpURL\": \"https://${REST_SERVER_URL}/api\"}"
-    cf set-env ${CF_APP} REST_SERVER_URL "${REST_SERVER_URL}"
-    cf set-env ${CF_APP} PLAYGROUND_URL "${PLAYGROUND_URL}"
+    cf set-env ${CF_APP} REST_SERVER_URL "https://${REST_SERVER_URL}"
+    cf set-env ${CF_APP} PLAYGROUND_URL "https://${PLAYGROUND_URL}"
 
     # Start her up
     date
