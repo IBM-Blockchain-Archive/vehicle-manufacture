@@ -52,7 +52,6 @@ install_playground() {
     cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
     cf start composer-playground-${CF_APP}
 
-    export PLAYGROUND_URL=$(cf app composer-playground-${CF_APP} | grep routes: | awk '{print $2}')
     date
     printf "\n ---- Installed composer-playground ----- \n"
 }
@@ -91,7 +90,10 @@ start_app() {
     cf bind-service ${CF_APP} "${SERVICE_INSTANCE_NAME}" -c "{\"permissions\":\"read-only\"}"
 
     export REST_SERVER_URL=$(cf app composer-rest-server-${CF_APP} | grep routes: | awk '{print $2}')
+    export PLAYGROUND_URL=$(cf app composer-playground-${CF_APP} | grep routes: | awk '{print $2}')
     cf set-env ${CF_APP} REST_SERVER_CONFIG "{\"webSocketURL\": \"wss://${REST_SERVER_URL}\", \"httpURL\": \"https://${REST_SERVER_URL}/api\"}"
+    cf set-env ${CF_APP} REST_SERVER_URL "${REST_SERVER_URL}"
+    cf set-env ${CF_APP} PLAYGROUND_URL "${PLAYGROUND_URL}"
 
     # Start her up
     date
