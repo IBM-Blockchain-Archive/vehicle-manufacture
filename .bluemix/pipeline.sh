@@ -307,6 +307,7 @@ composer card create -f ca.card -p ./config/connection-profile.json -u admin -s 
 composer card import -f ca.card -n ca
 # request identity
 composer identity request --card ca --path ./credentials
+composer card delete -n ca
 export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
 
 # add admin cert
@@ -370,7 +371,7 @@ date
 printf "\n ---- Create admin card ----- \n "
 composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
 
-composer card import -f adminCard.card -n adminCard
+composer card import -f adminCard.card -n admin@blockchain-network
 date
 printf "\n ---- Created admin card ----- \n "
 
@@ -392,7 +393,7 @@ printf "\n --- created archive --- \n"
 
 date
 printf "\n --- install network --- \n"
-composer runtime install -c adminCard -n vehicle-manufacture-network
+composer runtime install -c admin@blockchain-network -n vehicle-manufacture-network
 date
 printf "\n --- installed network --- \n"
 
@@ -402,7 +403,7 @@ update_status
 date
 printf "\n --- start network --- \n"
 
-while ! composer network start -c adminCard -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card; do
+while ! composer network start -c admin@blockchain-network -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card; do
 echo sleeping to retry network start
 sleep 30s
 done
