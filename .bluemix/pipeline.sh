@@ -27,8 +27,7 @@ update_status() {
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \
-      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}' \
-      | jq '.' || true
+      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}'
     curl -X PUT -s -S\
       "$API_HOST/api/v1/networks/$NETWORKID/sample/vehicle_manufacture" \
       -H 'Cache-Control: no-cache' \
@@ -98,7 +97,6 @@ start_app() {
     date
     printf "\n --- Starting vehicle manufacture app '${CF_APP}' ---\n"
     cf start ${CF_APP}
-    export APP_URL=$(cf app ${CF_APP} | grep -Po "(?<=routes:)\s*\S*")
 
     date
     printf "\n --- Started the Vehicle manufacture application '${CF_APP}' ---\n"
@@ -467,6 +465,7 @@ wait ${APP_PID}
 # Ping IBP that the application is alive  - [ Optional ]
 # -----------------------------------------------------------
 
+export APP_URL=$(cf app ${CF_APP} | grep -Po "(?<=routes:)\s*\S*")
 export COMPLETED_STEP="6"
 update_status
 
