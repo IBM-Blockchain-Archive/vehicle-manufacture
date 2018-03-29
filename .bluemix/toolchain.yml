@@ -57,7 +57,7 @@ services:
       imageUrl: 'https://github.com/IBM-Blockchain/vehicle-manufacture/raw/master/public/imgs/VehicleManufactureToolchain.png'
       documentationUrl: 'https://github.com/IBM-Blockchain/vehicle-manufacture'
       name: 'Node.js Application'
-      dashboard_url: 'https://{{form.pipeline.parameters.prod-app-name}}.stage1.mybluemix.net/login'
+      dashboard_url: 'https://{{form.pipeline.parameters.prod-app-name}}.mybluemix.net/login'
       description: 'This is your Vehicle Manufacturing node.js application. You do not need to modify anything.'
       additional-properties: 'nope'
 form:
