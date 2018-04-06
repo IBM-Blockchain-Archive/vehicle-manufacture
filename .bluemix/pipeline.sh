@@ -393,7 +393,10 @@ printf "\n --- created archive --- \n"
 
 date
 printf "\n --- install network --- \n"
-composer runtime install -c admin@blockchain-network -n vehicle-manufacture-network
+while ! composer runtime install -c admin@blockchain-network -n vehicle-manufacture-network; do
+echo sleeping to retry runtime install
+sleep 30s
+done
 date
 printf "\n --- installed network --- \n"
 
