@@ -262,7 +262,8 @@ printf "\n --- Got service credentials ---\n"
   printf "\n ---- Install composer-cli and composer-wallet-cloudant ----- \n "
 
   npm install -g composer-cli@0.18.1 @ampretia/composer-wallet-cloudant
-
+  npm --prefix /home/pipeline/.nvm/versions/node/v8.11.1/lib/node_modules/composer-cli/ uninstall grpc 
+  npm --prefix /home/pipeline/.nvm/versions/node/v8.11.1/lib/node_modules/composer-cli/ install grpc@1.9.1
   composer -v
 
   date
