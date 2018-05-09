@@ -307,7 +307,7 @@ composer card create -f ca.card -p ./config/connection-profile.json -u admin -s 
 composer card import -f ca.card -c ca
 # request identity
 composer identity request --card ca --path ./credentials
-composer card delete -n ca
+composer card delete -c ca
 export PUBLIC_CERT=$(cat ./credentials/admin-pub.pem | tr '\n' '~' | sed 's/~/\\r\\n/g')
 
 # add admin cert
