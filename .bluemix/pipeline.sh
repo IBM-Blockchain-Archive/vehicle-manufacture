@@ -304,7 +304,7 @@ export APP_PID=$!
 date
 printf "\n ----- create ca card ----- \n"
 composer card create -f ca.card -p ./config/connection-profile.json -u admin -s ${SECRET}
-composer card import -f ca.card -n ca
+composer card import -f ca.card -c ca
 # request identity
 composer identity request --card ca --path ./credentials
 composer card delete -n ca
@@ -371,7 +371,7 @@ date
 printf "\n ---- Create admin card ----- \n "
 composer card create -f adminCard.card -p ./config/connection-profile.json -u admin -c ./credentials/admin-pub.pem -k ./credentials/admin-priv.pem --role PeerAdmin --role ChannelAdmin
 
-composer card import -f adminCard.card -n admin@blockchain-network
+composer card import -f adminCard.card -c admin@blockchain-network
 date
 printf "\n ---- Created admin card ----- \n "
 
