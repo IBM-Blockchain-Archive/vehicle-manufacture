@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 trap 'detect_exit' 0 1 2 3 6
 
 export IBP_NAME="ibm-blockchain-5-prod"
@@ -48,7 +48,7 @@ install_playground() {
     # -----------------------------------------------------------
     date
     printf "\n ---- Install composer-playground ----- \n"
-    cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.18.1 -i 1 -m 256M --no-start --no-manifest
+    cf push composer-playground-${CF_APP} --docker-image sstone1/composer-playground:0.19.4 -i 1 -m 256M --no-start --no-manifest
     cf set-env composer-playground-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
     cf start composer-playground-${CF_APP}
 
@@ -59,7 +59,7 @@ install_playground() {
 push_restserver() {
     date
     printf "\n----- Pushing REST server ----- \n"
-    cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.18.1 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start --no-manifest
+    cf push composer-rest-server-${CF_APP} --docker-image sstone1/composer-rest-server:0.19.4 -c "composer-rest-server -c admin@vehicle-manufacture-network -n never -w true" -i 1 -m 256M --no-start --no-manifest
     cf set-env composer-rest-server-${CF_APP} NODE_CONFIG "${NODE_CONFIG}"
 
     date
@@ -261,7 +261,7 @@ printf "\n --- Got service credentials ---\n"
   date
   printf "\n ---- Install composer-cli and composer-wallet-cloudant ----- \n "
 
-  npm install -g composer-cli@0.18.1 @ampretia/composer-wallet-cloudant
+  npm install -g composer-cli@0.19.4 @ampretia/composer-wallet-cloudant
 
   composer -v
 
@@ -380,20 +380,21 @@ printf "\n ---- Created admin card ----- \n "
 ## -----------------------------------------------------------
 date
 printf "\n --- get network --- \n"
-#TODO make this not unstable
+# TODO make this not unstable
 npm install vehicle-manufacture-network@unstable
 date
 printf "\n --- got network --- \n"
 
 date
 printf "\n --- create archive --- \n"
-composer archive create -a ./vehicle-manufacture-network.bna -t dir -n node_modules/vehicle-manufacture-network
+BUSINESS_NETWORK_VERSION=$(jq --raw-output '.version' ./node_modules/vehicle-manufacture-network/package.json)
+composer archive create -a ./vehicle-manufacture-network.bna -t dir -n ./node_modules/vehicle-manufacture-network
 date
 printf "\n --- created archive --- \n"
 
 date
 printf "\n --- install network --- \n"
-while ! composer runtime install -c admin@blockchain-network -n vehicle-manufacture-network; do
+while ! composer network install -c admin@blockchain-network -a ./vehicle-manufacture-network.bna; do
 echo sleeping to retry runtime install
 sleep 30s
 done
@@ -406,7 +407,7 @@ update_status
 date
 printf "\n --- start network --- \n"
 
-while ! composer network start -c admin@blockchain-network -a vehicle-manufacture-network.bna -A admin -C ./credentials/admin-pub.pem -f delete_me.card; do
+while ! composer network start -c admin@blockchain-network -n vehicle-manufacture-network -V ${BUSINESS_NETWORK_VERSION} -A admin -C ./credentials/admin-pub.pem -f delete_me.card; do
 echo sleeping to retry network start
 sleep 30s
 done
