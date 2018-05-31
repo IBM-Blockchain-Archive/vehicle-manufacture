@@ -28,13 +28,24 @@ update_status() {
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \
       -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}'
-    curl -X PUT -s -S\
+
+    if [ "$COMPLETED_STEP" == "6" ]; then
+        curl -X PUT -s -S\
+      "$API_HOST/api/v1/networks/$NETWORKID/sample/vehicle_manufacture" \
+      -H 'Cache-Control: no-cache' \
+      -H 'Content-Type: application/json' \
+      -u $USERID:$PASSWORD \
+      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'", "meta": { "urls": {"playground": "https://'${REST_SERVER_URL}'", "rest": "https://'${PLAYGROUND_URL}'" }}' \
+      | jq '.' || true
+    else
+        curl -X PUT -s -S\
       "$API_HOST/api/v1/networks/$NETWORKID/sample/vehicle_manufacture" \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \
       -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'"}' \
       | jq '.' || true
+    fi
 }
 
 get_connection_profile() {
