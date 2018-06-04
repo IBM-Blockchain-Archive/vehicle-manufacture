@@ -35,7 +35,7 @@ update_status() {
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -u $USERID:$PASSWORD \
-      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'", "meta": { "urls": {"playground": "https://'${REST_SERVER_URL}'", "rest": "https://'${PLAYGROUND_URL}'" }}' \
+      -d '{"app": "'"$CF_APP"'", "url": "'"$APP_URL"'", "completed_step": "'"$COMPLETED_STEP"'", "meta": { "urls": {"playground": "https://'"$REST_SERVER_URL"'", "rest": "https://'"$PLAYGROUND_URL"'" }}' \
       | jq '.' || true
     else
         curl -X PUT -s -S\
