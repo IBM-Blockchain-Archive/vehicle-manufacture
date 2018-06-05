@@ -473,15 +473,12 @@ export REST_PID=$!
 # Start the app
 # -----------------------------------------------------------
 
-start_app &
-export APP_PID=$!
+start_app
 
 wait ${REST_PID}
 
 export COMPLETED_STEP="5"
 update_status
-
-wait ${APP_PID}
 
 # -----------------------------------------------------------
 # Ping IBP that the application is alive  - [ Optional ]
