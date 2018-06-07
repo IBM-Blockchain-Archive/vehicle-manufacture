@@ -1,28 +1,40 @@
 ---
 stages:
-- name: Deploy Vehicle Manufacture Application
+- name: BUILD
   inputs:
   - type: git
     branch: master
-    service: ${SAMPLE_REPO}
+    service: ${REPO}
   triggers:
   - type: commit
+  jobs:
+  - name: Build
+    type: builder
+    script: |-
+      #!/bin/bash
+      ./.bluemix/pipeline-BUILD.sh
+- name: "DEPLOY"
+  inputs:
+  - type: job
+    stage: BUILD
+    job: Build
+  triggers:
+  - type: stage
   properties:
-  - name: SERVICE_INSTANCE_NAME
-    value: '{{sin}}'
+  - name: BLOCKCHAIN_SERVICE_INSTANCE
+    value: ${BLOCKCHAIN_SERVICE_INSTANCE}
     type: text
-  - name: SAMPLE_REPO
-    value: '{{SAMPLE_REPO}}'
+  - name: CLOUDANT_SERVICE_INSTANCE
+    value: ${CLOUDANT_SERVICE_INSTANCE}
     type: text
   jobs:
-  - name: deploy-vehicle-manufacture-app
+  - name: Deploy
     type: deployer
     target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
+      region_id: ${REGION_ID}
+      organization: ${ORG_NAME}
+      space: ${SPACE_NAME}
       application: ${CF_APP_NAME}
-    script: |
+    script: |-
       #!/bin/bash
-      exec ./.bluemix/pipeline.sh
-
+      ./.bluemix/pipeline-DEPLOY.sh

@@ -1,0 +1,7 @@
+---
+applications:
+- name: vehicle-manufacture
+  memory: 128M
+  instances: 1
+  command: "npm start"
+  path: "."
