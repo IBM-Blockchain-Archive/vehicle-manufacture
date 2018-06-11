@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Blockchain Starter Kit",
+  "title": "Vehicle Manufacture Sample",
   "description": "",
-  "longDescription": "The Delivery Pipeline automates the continuous deployment of the IBM Blockchain Starter Kit to IBM Cloud.",
+  "longDescription": "The Delivery Pipeline automates the continuous deployment of the IBM Blockchain Vehicle Manufacture Sample to IBM Cloud.",
   "type": "object",
   "properties": {
     "deploy-region": {

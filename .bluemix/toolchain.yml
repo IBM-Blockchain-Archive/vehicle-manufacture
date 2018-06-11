@@ -1,13 +1,13 @@
 version: '2'
 template:
-  name: "Blockchain Starter Kit"
-  description: "Deploy the IBM Blockchain Starter Kit to IBM Cloud."
+  name: "Vehicle Manufacture Sample"
+  description: "Deploy the IBM Blockchain Vehicle Manufacture Sample to IBM Cloud."
   required:
     - repo
     - build
 
 toolchain:
-  name: 'blockchain-starter-kit-{{timestamp}}'
+  name: 'vehicle-manufacture-sample-{{timestamp}}'
 
 services:
   repo:
@@ -46,5 +46,5 @@ form:
       deploy-region: '{{region}}'
       deploy-organization: '{{organization}}'
       deploy-space: '{{space}}'
-      blockchain-service-instance: '{{sin}}'
-      cloudant-service-instance: '{{toolchain.name}}'
+      blockchain-service-instance: 'vehicle-manufacture-blockchain-service'
+      cloudant-service-instance: 'vehicle-manufacture-cloudant-service'
