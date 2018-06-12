@@ -2,7 +2,7 @@
 
 This is the tutorial guide for the vehicle manufacture demo. The tutorial can be run as an application to help users run through the demo, providing information on what to do as well as why blockchain is useful for the task.
 
-The tutorial instructions will run along side the demo once deployed, you can also view them (here)[apps/tutorial.md]
+The tutorial instructions will run along side the demo once deployed, you can also view them [here](apps/tutorial.md])
 
 [![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)](https://console.bluemix.net/devops/setup/deploy/?repository=https%3A//github.com/ibm-blockchain/vehicle-manufacture&branch=master&env_id=ibm%3Ayp%3Aus-south&deploy-region=ibm%3Ayp%3Aus-south)
 
