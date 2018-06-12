@@ -2,8 +2,6 @@
 
 set -ex
 
-source .bluemix/config.sh
-
 export COMPOSER_VERSION=0.19.5
 
 function install_nodejs {

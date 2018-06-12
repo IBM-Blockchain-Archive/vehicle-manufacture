@@ -404,7 +404,6 @@ if [[ "${HAS_COMPOSER_CONTRACTS}" = "true" ]]
 then
     create_blockchain_network_card
 fi
-update_blockchain_deploy_status 1
 
 deploy_contracts &
 DEPLOY_CONTRACTS_PID=$!
@@ -415,12 +414,9 @@ DEPLOY_COMPOSER_PLAYGROUND=$!
 deploy_apps &
 DEPLOY_APPS_PID=$!
 wait ${DEPLOY_CONTRACTS_PID}
-update_blockchain_deploy_status 2
-update_blockchain_deploy_status 3
 wait ${DEPLOY_REST_SERVERS_PID}
 wait ${DEPLOY_COMPOSER_PLAYGROUND}
 wait ${DEPLOY_APPS_PID}
-update_blockchain_deploy_status 4
 
 gather_rest_server_urls
 gather_playground_url
@@ -434,6 +430,4 @@ start_apps &
 START_APPS_PID=$!
 wait ${START_REST_SERVERS_PID}
 wait ${START_COMPOSER_PLAYGROUND}
-update_blockchain_deploy_status 5
 wait ${START_APPS_PID}
-update_blockchain_deploy_status 6
