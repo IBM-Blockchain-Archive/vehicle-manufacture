@@ -1,68 +1,50 @@
 version: '2'
-messages:
-  $i18n: locales.yml
 template:
-  name:
-    $ref: "#/messages/template.name"
-  description:
-    $ref: "#/messages/template.description"
-  header: '![](VehicleManufactureToolchainDiagram.png)'
-  icon: "../public/imgs/VehicleManufactureToolchain.png"
+  name: "Vehicle Manufacture Sample"
+  description: "Deploy the IBM Blockchain Vehicle Manufacture Sample to IBM Cloud."
   required:
-    - vehicle-build
-    - vehicle-repo
-  info:
-    git url: >-
-      [https://github.com/IBM-Blockchain/vehicle-manufacture](https://github.com/IBM-Blockchain/vehicle-manufacture)
-    git branch: >-
-      [master](https://github.com/IBM-Blockchain/vehicle-manufacture/tree/master)
+    - repo
+    - build
+
 toolchain:
-  name: 'vehicle-manufacture-tc-{{timestamp}}'
-  template:
-    getting_started:
-      $ref: "#/messages/template.gettingStarted"
+  name: 'vehicle-manufacture-sample-{{timestamp}}'
+
 services:
-  vehicle-repo:
+  repo:
     service_id: githubpublic
     parameters:
-      repo_name: 'vehicle-manufacture-{{timestamp}}'
-      repo_url: 'https://github.com/IBM-Blockchain/vehicle-manufacture'
+      repo_name: '{{toolchain.name}}'
+      repo_url: 'https://github.com/ibm-blockchain/vehicle-manufacture'
       type: clone
-      has_issues: false
+      has_issues: true
       enable_traceability: true
-  vehicle-build:
+  build:
     service_id: pipeline
     parameters:
       services:
-        - vehicle-repo
-      name: '{{services.vehicle-repo.parameters.repo_name}}'
+        - repo
+      name: '{{services.repo.parameters.repo_name}}'
       ui-pipeline: true
       sin: 'test'
       configuration:
         content:
           $text: pipeline.yml
         env:
-          SIN: 'testing'
-          SAMPLE_REPO: vehicle-repo
-          CF_APP_NAME: '{{form.pipeline.parameters.prod-app-name}}'
-          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
-          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
-          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          REPO: repo
+          SPACE_NAME: '{{form.pipeline.parameters.deploy-space}}'
+          ORG_NAME: '{{form.pipeline.parameters.deploy-organization}}'
+          REGION_ID: '{{form.pipeline.parameters.deploy-region}}'
+          BLOCKCHAIN_SERVICE_INSTANCE: '{{form.pipeline.parameters.blockchain-service-instance}}'
+          CLOUDANT_SERVICE_INSTANCE: '{{form.pipeline.parameters.cloudant-service-instance}}'
         execute: true
-  vehicle-app:
-    service_id: customtool
-    parameters:
-      type: 'Vehicle'
-      lifecyclePhase: 'RUN'
-      imageUrl: 'https://github.com/IBM-Blockchain/vehicle-manufacture/raw/master/public/imgs/VehicleManufactureToolchain.png'
-      documentationUrl: 'https://github.com/IBM-Blockchain/vehicle-manufacture'
-      name: 'Node.js Application'
-      dashboard_url: 'https://{{form.pipeline.parameters.prod-app-name}}.mybluemix.net/login'
-      description: 'This is your Vehicle Manufacturing node.js application. You do not need to modify anything.'
-      additional-properties: 'nope'
+
 form:
   pipeline:
-    parameters:
-      prod-app-name: '{{services.vehicle-repo.parameters.repo_name}}'
     schema:
       $ref: deploy.json
+    parameters:
+      deploy-region: '{{region}}'
+      deploy-organization: '{{organization}}'
+      deploy-space: '{{space}}'
+      blockchain-service-instance: '{{sin}}'
+      cloudant-service-instance: 'vehicle-manufacture-cloudant-service'
