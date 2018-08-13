@@ -64,13 +64,17 @@ Use the ``Deploy to IBM Cloud`` button **OR** manually deploy to IBM Cloud.
   * `npm install -g @ampretia/composer-wallet-cloudant@0.2.1`
 - [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html)
   * for Mac OS X Installation
-    `brew tap cloudfoundry/tap`
-    `brew install cf-cli`
+    ```
+    brew tap cloudfoundry/tap
+    brew install cf-cli
+    ```
   * for Linux (Debian and Ubuntu based) Installation
-    `wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -`
-    `echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list`
-    `sudo apt-get update`
-    `sudo apt-get install cf-cli`
+    ```
+    wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+    echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+    sudo apt-get update
+    sudo apt-get install cf-cli
+    ```
 
 ### 2. Clone the repository
 
