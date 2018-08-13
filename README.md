@@ -15,7 +15,7 @@ This code pattern is for developers looking to start building blockchain applica
 The tutorial instructions will run along side the demo once deployed, you can also view them [here](apps/vehicle-manufacture/tutorial.md)
 
 # Architecture Flow
-![Architecture Flow](https://github.com/ash7594/vehicle-manufacture/blob/code-pattern-mods/docs/doc-images/arch-flow.png?raw=true)
+![Architecture Flow](docs/doc-images/arch-flow.png?raw=true)
 
 1. The buyer of the vehicle views the catalog of cars on his dashboard.
 2. They personalize the vehicle by selecting model, exterior and interior options and other packages/add-ons available withthe vehicle.
