@@ -1,33 +1,88 @@
-# Vehicle Manufacture Tutorial
-This is the tutorial guide for the vehicle manufacture demo. The tutorial can be run as an application to help users run through the demo, providing information on what to do as well as why blockchain is useful for the task.
+# Vehicle Manufacture with Blockchain
+Imagine you are a car manufacturer, and have just made your most desired concept car a reality for the public. Hundreds of thousands of orders are pouring in and you need a way to manage the manufacturing and assembly process of these orders in an automated fashion. Moreover, you need to conform to certain regulatory standards and thus keep a record of all of the company's business dealings to ensure that it conforms to the regulator's standards and are prepared for audit. Blockchain means that these regulatory rules are embodied by code in a smart contract and thus a company can ensure that by recording these dealings using that smart contract in the blockchain, they are meeting the requirements laid out and the blockchain provides a full record for audit.
+
+In this code pattern, we will create a vehicle manufacturing program with blockchain using Hyperledger Composer, and demonstrate it through a Node.js web application. The application showcases the scenario of buying and manufacturing a vehicle.
+
+It has three dashboards. One for the vehicle buyer, where they can view the catalog of vehicles, personalize their selection and make the purchase. The second dashboard view is for the manufacturer where they can see the car purchase requests made, track the process of the car manufacture and verify delivery status details. The third dashboard is for vehicle regulatory officer where they regulate car manufacture and can view the full list of transactions recorded on the blockchain.
+
+As the vehicle is assembled, components like the chassis and interior will be built or installed, and the blockchain assets will be updated. Finally, the vehicle identification number, VIN, can be automatically assigned in accordance with a smart contract, without manual regulator approval, retaining regulatory oversight.
+
+This code pattern is for developers looking to start building blockchain applications with Hyperledger Composer. When the reader has completed this code pattern, they will understand how to:
+* Create basic business network using Hyperledger Composer
+* Deploy the network to IBM Blockchain Starter Plan manually
+* Build a Node.js web application to interact with the blockchain network using Composer
+
 The tutorial instructions will run along side the demo once deployed, you can also view them [here](apps/vehicle-manufacture/tutorial.md)
 
+# Architecture Flow
+![Architecture Flow](docs/doc-images/arch-flow.png?raw=true)
+
+1. The buyer of the vehicle views the catalog of cars on his dashboard.
+2. They personalize the vehicle by selecting model, exterior and interior options and other packages/add-ons available withthe vehicle.
+3. They submit the order.
+4. The order is received by the manufacturer on their dashboard where they view the progress of the assembly of the vehicle and the shipment status.
+5. The vehicle regulatory views and tracks all details and changes with respect to the order on the blockchain, allowing maximum transparency.
+
+# Included Components
+* [Hyperledger Composer v0.19.4](https://hyperledger.github.io/composer/latest/) Hyperledger Composer is an extensive, open development toolset and framework to make developing blockchain applications easier
+* [Hyperledger Fabric v1.1](https://hyperledger-fabric.readthedocs.io) Hyperledger Fabric is a platform for distributed ledger solutions, underpinned by a modular architecture delivering high degrees of confidentiality, resiliency, flexibility and scalability.
+* [IBM Blockchain Starter Plan](https://console.bluemix.net/catalog/services/blockchain) The IBM Blockchain Platform Starter Plan allows to build and try out blockchain network in an environment designed for development and testing
+
+## Featured Technologies
+* [Nodejs](https://www.python.org/) Node.js is an open-source, cross-platform JavaScript run-time environment that executes JavaScript code server-side
+
+# Running the Application
+Use the ``Deploy to IBM Cloud`` button **OR** manually deploy to IBM Cloud.
+
+## Directly deploy to IBM Cloud
 [![Deploy to IBM Cloud](https://bluemix.net/deploy/button.png)](https://console.bluemix.net/devops/setup/deploy/?repository=https%3A//github.com/ibm-blockchain/vehicle-manufacture&branch=master&env_id=ibm%3Ayp%3Aus-south&deploy-region=ibm%3Ayp%3Aus-south)
 
-## Manually deploy this demo to IBM Cloud
+## Manually deploy to IBM Cloud
+1. [Setup your machine](#1-setup-your-machine)
+2. [Clone the repository](#2-clone-the-repository)
+3. [Create the BNA File](#3-create-the-bna-file)
+4. [Create a Blockchain Service](#4-create-a-blockchain-service)
+5. [Configure certificates](#5-configure-certificates)
+6. [Install and start the network](#6-install-and-start-the-network)
+7. [Provision Cloudant](#7-provision-cloudant)
+8. [Deploy the applications](#8-deploy-the-applications)
+9. [Start the applications](#9-start-the-applications)
 
 ### 1. Setup your machine
-Install the composer command line tools:
+- [npm](https://www.npmjs.com/)  (v5.x)
+- [Node](https://nodejs.org/en/) (version 8.9 or higher - note version 9 is not supported)
+* to install specific Node version you can use [nvm](https://davidwalsh.name/nvm)
 
-```
-npm install -g composer-cli@0.19.5
-```
+  Example:
+  + 1. `nvm install 8.11.3`
+  + 2. `nvm use v8.11.3`
+  + 3. Output `Now using node v8.11.3 (npm v5.6.0)`
+- [Hyperledger Composer](https://hyperledger.github.io/composer/installing/development-tools.html)
+  * to install composer cli
+    `npm install -g composer-cli@0.19.5`
+- [Cloud Wallet Package](https://www.npmjs.com/package/@ampretia/composer-wallet-cloudant)
+  * `npm install -g @ampretia/composer-wallet-cloudant@0.2.1`
+- [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html)
+  * for Mac OS X Installation
+    ```
+    brew tap cloudfoundry/tap
+    brew install cf-cli
+    ```
+  * for Linux (Debian and Ubuntu based) Installation
+    ```
+    wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+    echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+    sudo apt-get update
+    sudo apt-get install cf-cli
+    ```
 
-Install the cloud wallet package:
-
-```
-npm install -g @ampretia/composer-wallet-cloudant@0.2.1
-```
-
-Install the [cloud foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html)
-
-Clone this repository:
+### 2. Clone the repository
 
 ```
 git clone https://github.com/IBM-Blockchain/vehicle-manufacture.git
 ```
 
-Create the BNA:
+### 3. Create the BNA File
 
 ```
 cd vehicle-manufacture
@@ -35,13 +90,13 @@ mkdir contracts/dist
 composer archive create -t dir -n contracts/vehicle-manufacture-network -a contracts/dist/vehicle-manufacture-network.bna
 ```
 
-### 2. Create a Blockchain Service
+### 4. Create a Blockchain Service
 
 Create a new Blockchain service in your IBM Cloud space ([link](https://console.bluemix.net/catalog/services/blockchain)). Give your service a  name, select 'Starter Membership Plan' for the pricing and then press **Create**. You should then be taken to the dashboard for your service.
 
 ![Create blockchain service screenshot](media/create-blockchain-service.png)
 
-### 3. Configure certificates
+### 5. Configure certificates
 
 In your blockchain service dashboard press the **Launch** button. Use the nav bar on the left to open the 'Channels' page and confirm that your peer is in the default channel. If it is not, add it manually by using the three dots in the actions column.
 
@@ -77,7 +132,8 @@ Add these certificate files to your starter plan instance by opening the 'Member
 Press **Submit** and then **Restart**. Restarting the peer may take several minutes.
 
 Finally sync the certificates to the channel by opening the 'Channels' page and in the default channel press the three dots in the actions column to open the menu. Click **Sync Certificate** and then **Submit** in the popup.
-### 4. Install and start the network
+
+### 6. Install and start the network
 
 > Note: Ensure that your terminal is in the cloned repository folder.
 
@@ -133,7 +189,7 @@ Use ping to check that the network has deployed:
 composer network ping -c admin@vehicle-manufacture-network
 ```
 
-### 5. Provision Cloudant
+### 7. Provision Cloudant
 
 Create a new Cloudant service in the same space as your blockchain service ([link](https://console.bluemix.net/catalog/services/cloudantNoSQLDB)). Give your service a name, select 'Lite' for the plan and then press **Create**. you should then be taken to the Cloudant dashboard.
 
@@ -194,7 +250,7 @@ Import the admin card to the Cloudant service:
 composer card import -f ./admin@vehicle-manufacture-network.card
 ```
 
-### 6. Deploy the applications
+### 8. Deploy the applications
 
 Log in to Cloud Foundry and select the space you deployed your Blockchain service to:
 ```
@@ -269,7 +325,7 @@ Set the environment variable used to tell the vehicle manufacture application wh
 cf set-env vehicle-manufacture PLAYGROUND_URL 'https://<PLAYGROUND_URL>'
 ```
 
-### 7. Start the applications
+### 9. Start the applications
 
 Start the REST server:
 
