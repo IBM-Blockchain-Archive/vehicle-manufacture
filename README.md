@@ -51,11 +51,11 @@ Use the ``Deploy to IBM Cloud`` button **OR** manually deploy to IBM Cloud.
 ### 1. Setup your machine
 - [npm](https://www.npmjs.com/)  (v5.x)
 - [Node](https://nodejs.org/en/) (version 8.9 or higher - note version 9 is not supported)
-* to install specific Node version you can use [nvm](https://davidwalsh.name/nvm)
+* to install specific Node version you can use [nvm](https://hyperledger.github.io/composer/latest/installing/installing-prereqs.html)
 
   Example:
-  + 1. `nvm install 8.11.3`
-  + 2. `nvm use v8.11.3`
+  + 1. `nvm install --lts`
+  + 2. `nvm use --lts`
   + 3. Output `Now using node v8.11.3 (npm v5.6.0)`
 - [Hyperledger Composer](https://hyperledger.github.io/composer/installing/development-tools.html)
   * to install composer cli
@@ -188,6 +188,10 @@ Use ping to check that the network has deployed:
 ```
 composer network ping -c admin@vehicle-manufacture-network
 ```
+
+![network ping](media/network-ping.png)
+
+Congrats, you've configured your blockchain network!
 
 ### 7. Provision Cloudant
 
