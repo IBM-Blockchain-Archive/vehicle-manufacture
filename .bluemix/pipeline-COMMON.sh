@@ -2,7 +2,7 @@
 
 set -ex
 
-export COMPOSER_VERSION=0.19.5
+export COMPOSER_VERSION=0.20.2
 
 function install_nodejs {
     npm config delete prefix
@@ -16,7 +16,7 @@ function install_nodejs {
 }
 
 function install_composer {
-    npm install -g composer-cli@${COMPOSER_VERSION} @ampretia/composer-wallet-cloudant
+    npm install -g composer-cli@${COMPOSER_VERSION} composer-wallet-cloudant
 }
 
 function install_jq {

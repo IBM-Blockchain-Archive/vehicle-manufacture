@@ -185,7 +185,7 @@ function deploy_composer_rest_server {
     fi
     cf push \
         ${CF_APP_NAME} \
-        --docker-image ibmblockchain/composer-rest-server:${COMPOSER_VERSION} \
+        --docker-image hyperledger/composer-rest-server:${COMPOSER_VERSION} \
         -i 1 \
         -m 256M \
         --no-start \
@@ -203,7 +203,7 @@ function deploy_composer_playground {
 
     CF_APP_NAME=${PLAYGROUND_APP_NAME}
     
-    cf push ${CF_APP_NAME} --docker-image ibmblockchain/composer-playground:${COMPOSER_VERSION} -i 1 -m 256M --no-start --random-route --no-manifest
+    cf push ${CF_APP_NAME} --docker-image hyperledger/composer-playground:${COMPOSER_VERSION} -i 1 -m 256M --no-start --random-route --no-manifest
     cf set-env ${CF_APP_NAME} NODE_CONFIG "${NODE_CONFIG}"
     cf start ${CF_APP_NAME}
 }
