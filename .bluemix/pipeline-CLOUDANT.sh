@@ -32,7 +32,7 @@ function create_cloudant_database {
 
 function configure_composer_wallet {
     read -d '' NODE_CONFIG << EOF || true
-    {"composer":{"wallet":{"type":"@ampretia/composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
+    {"composer":{"wallet":{"type":"composer-wallet-cloudant","desc":"Uses cloud wallet","options":${CLOUDANT_CREDS}}}}
 EOF
     export NODE_CONFIG
 }
