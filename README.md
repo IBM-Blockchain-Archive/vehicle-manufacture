@@ -24,7 +24,7 @@ The tutorial instructions will run along side the demo once deployed, you can al
 5. The vehicle regulatory views and tracks all details and changes with respect to the order on the blockchain, allowing maximum transparency.
 
 # Included Components
-* [Hyperledger Composer v0.20.2](https://hyperledger.github.io/composer/latest/) Hyperledger Composer is an extensive, open development toolset and framework to make developing blockchain applications easier
+* [Hyperledger Composer v0.20.3](https://hyperledger.github.io/composer/latest/) Hyperledger Composer is an extensive, open development toolset and framework to make developing blockchain applications easier
 * [Hyperledger Fabric v1.2](https://hyperledger-fabric.readthedocs.io) Hyperledger Fabric is a platform for distributed ledger solutions, underpinned by a modular architecture delivering high degrees of confidentiality, resiliency, flexibility and scalability.
 * [IBM Blockchain Starter Plan](https://console.bluemix.net/catalog/services/blockchain) The IBM Blockchain Platform Starter Plan allows to build and try out blockchain network in an environment designed for development and testing
 
@@ -59,7 +59,7 @@ Use the ``Deploy to IBM Cloud`` button **OR** manually deploy to IBM Cloud.
   + 3. Output `Now using node v8.11.3 (npm v5.6.0)`
 - [Hyperledger Composer](https://hyperledger.github.io/composer/installing/development-tools.html)
   * to install composer cli
-    `npm install -g composer-cli@0.20.2`
+    `npm install -g composer-cli@0.20.3`
 - [Cloud Wallet Package](https://www.npmjs.com/package/composer-wallet-cloudant)
   * `npm install -g composer-wallet-cloudant@0.0.13`
 - [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html)
@@ -268,7 +268,7 @@ cf login
 Push the REST server using the docker image:
 
 ```
-cf push vehicle-manufacture-rest --docker-image hyperledger/composer-rest-server:0.20.2 -i 1 -m 256M --no-start --no-manifest --random-route
+cf push vehicle-manufacture-rest --docker-image hyperledger/composer-rest-server:0.20.3 -i 1 -m 256M --no-start --no-manifest --random-route
 ```
 
 Set the NODE_CONFIG environment variable for the REST server:
@@ -290,7 +290,7 @@ cf set-env vehicle-manufacture-rest COMPOSER_WEBSOCKETS true
 Push playground using the docker image:
 
 ```
-cf push vehicle-manufacture-playground --docker-image hyperledger/composer-playground:0.20.2 -i 1 -m 256M --no-start --random-route --no-manifest
+cf push vehicle-manufacture-playground --docker-image hyperledger/composer-playground:0.20.3 -i 1 -m 256M --no-start --random-route --no-manifest
 ```
 
 Set the NODE_CONFIG environment variable for the playground using the contents of your `cloudant.json` file:
