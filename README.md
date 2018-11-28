@@ -356,3 +356,9 @@ You can now run the tutorial by clicking vehicle-manufacture in your IBM Cloud d
 In the home screen of the car builder press the cog icon. Check that the URLs for the REST server are set to the route of your REST server in IBM Cloud. The HTTP URL should be https://<YOUR_ROUTE>/api and the Web Socket URL wss://<YOUR_ROUTE>.
 
 If you have pressed the **Update** button before, the settings used by the car builder will come from cookies stored in your browser. These settings will overwrite the REST server settings recorded in the environment variables for the vehicle manufacture app. Entering the correct REST URL and pressing **Update** will update this cookie and should fix the error, alternatively to use the environment variable value in the developer console enter `localStorage.clear()`.
+
+### License
+
+This code pattern is licensed under the Apache Software License, Version 2. Separate third party code objects invoked within this code pattern are licensed by their respective providers pursuant to their own separate licenses. Contributions are subject to the Developer [Certificate of Origin, Version 1.1 (“DCO”)] (https://developercertificate.org/) and the [Apache Software License, Version 2]( (http://www.apache.org/licenses/LICENSE-2.0.txt).
+
+ASL FAQ link: http://www.apache.org/foundation/license-faq.html#WhatDoesItMEAN
