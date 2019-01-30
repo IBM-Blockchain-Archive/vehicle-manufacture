@@ -323,7 +323,7 @@ Use this command to set the environment variable replacing <REST_SERVER_URL> wit
 cf set-env vehicle-manufacture REST_SERVER_URLS '{"vehicle-manufacture-rest": {"httpURL": "https://<REST_SERVER_URL>/api", "webSocketURL": "wss://<REST_SERVER_URL>"}}'
 ```
 
-Set the environment variable used to tell the vehicle manufacture application where the playground is located. to do this retrieve the playground URL using the method described above but for the playground application and then use the following command replacing <PLAYGROUND_URL> with the URL retrieved:
+Set the environment variable used to tell the vehicle manufacture application where the playground is located. To do this retrieve the playground URL using the method described above but for the playground application and then use the following command replacing <PLAYGROUND_URL> with the URL retrieved:
 
 ```
 cf set-env vehicle-manufacture PLAYGROUND_URL 'https://<PLAYGROUND_URL>'
