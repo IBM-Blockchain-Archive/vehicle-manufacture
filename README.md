@@ -1,3 +1,7 @@
+# WARNING: This repository is no longer maintained :warning:
+
+> This repository will not be updated. The repository will be kept available in read-only mode.
+
 # Vehicle Manufacture with Blockchain
 Imagine you are a car manufacturer, and have just made your most desired concept car a reality for the public. Hundreds of thousands of orders are pouring in and you need a way to manage the manufacturing and assembly process of these orders in an automated fashion. Moreover, you need keep a record of all of the company's business dealings to ensure that they conform to the regulator's standards and you are prepared for auditing. Blockchain means that these regulatory rules are embodied by code in a smart contract and thus a company can ensure that by recording these dealings using that smart contract in the blockchain, they are meeting the requirements laid out and the blockchain provides a full record for audit.
 
